@@ -25,6 +25,15 @@
     <Filter Include="Source Files\Memory">
       <UniqueIdentifier>{1c705214-7044-4e7e-abce-538bb2507bce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libararies\Libraries">
+      <UniqueIdentifier>{50236d7f-4ae4-435d-b5d4-c8844bc63bae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libararies\Libraries\cJSON">
+      <UniqueIdentifier>{4a58900e-140a-4042-a51e-71cf6961432d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libararies\Libraries\LodePNG">
+      <UniqueIdentifier>{49a8b344-5480-4c11-b58f-107afb442dda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\FrameworkPCH.cpp">
@@ -47,6 +56,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Memory\MyMemory.cpp">
       <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Libraries\cJSON\cJSON.c">
+      <Filter>Libararies\Libraries\cJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Libraries\LodePNG\lodepng.cpp">
+      <Filter>Libararies\Libraries\LodePNG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Memory\MyMemory.h">
       <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\cJSON\cJSON.h">
+      <Filter>Libararies\Libraries\cJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\LodePNG\lodepng.h">
+      <Filter>Libararies\Libraries\LodePNG</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

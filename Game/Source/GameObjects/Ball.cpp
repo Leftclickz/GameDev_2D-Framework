@@ -84,7 +84,6 @@ void Ball::Draw(vec2 camPos, vec2 projScale)
 void Ball::OnCollision(GameObject* pOtherGameObject)
 {
     vec2 dir = m_Position - pOtherGameObject->GetPosition();
-    pOtherGameObject->SetPosition( vec2( 150, 150 ) );
     dir.Normalize();
 
     m_Angle = atan2( dir.y, dir.x ) / PI * 180;

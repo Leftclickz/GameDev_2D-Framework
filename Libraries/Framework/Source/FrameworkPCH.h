@@ -42,6 +42,12 @@
 #include "Math/MyMatrix.h"
 
 #include "GL/GLHelpers.h"
+
+//#include "../Libraries/cJSON/cJSON.c"
+#include "../Libraries/cJSON/cJSON.h"
+#include "../Libraries/LodePNG/lodepng.h"
+
+
 #if WIN32
 #include "../Source-Win32/GL/GLExtensions.h"
 #include "../Source-Win32/GL/WGLExtensions.h"

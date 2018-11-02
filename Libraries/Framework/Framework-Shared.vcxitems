@@ -14,6 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Libraries\cJSON\cJSON.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Libraries\LodePNG\lodepng.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Memory\MyMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Events\EventManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\FrameworkPCH.cpp">
@@ -25,6 +31,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Utility\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\cJSON\cJSON.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Libraries\LodePNG\lodepng.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Memory\MyMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Events\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Events\EventManager.h" />

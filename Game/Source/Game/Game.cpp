@@ -10,6 +10,37 @@
 Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
 {
+
+	char* str;
+
+	//Create
+	{
+		cJSON* Root = cJSON_CreateObject();
+
+		cJSON* GameObject = cJSON_CreateObject();
+
+		cJSON_AddNumberToObject(GameObject, "x", 10.5f);
+		cJSON_AddNumberToObject(GameObject, "y", -12.5f);
+
+		cJSON_AddItemToObject(Root, "Game Object", GameObject);
+
+		str = cJSON_Print(Root);
+
+		cJSON_Delete(Root);
+	}
+	//Load
+	{
+		cJSON* Root = cJSON_Parse(str);
+		cJSON* obj = cJSON_GetObjectItem(Root, "Game Object");
+
+		float x = cJSON_GetObjectItem(obj, "x")->valuedouble;
+		float y = cJSON_GetObjectItem(obj, "y")->valuedouble;
+
+		cJSON_Delete(Root);
+	}
+
+	free(str);
+
     m_pShader = 0;
     m_pMeshTriangle = 0;
     m_pMeshCircle = 0;
