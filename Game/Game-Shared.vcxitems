@@ -19,8 +19,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
@@ -28,10 +30,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GamePCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>

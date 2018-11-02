@@ -2,3 +2,6 @@
 /Output
 /Game/Android-Application/ARM
 /Game/Android-Application/x86
+/Game/Output/Intermediate/Game-Win32/Win32/Game-Win32/Debug
+/Game/.vs/Game-Win32/v15
+/Game/Miku.png

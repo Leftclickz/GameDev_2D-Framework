@@ -19,7 +19,7 @@ protected:
     Mesh* m_pMeshCircle;
 
     Player* m_pPlayer;
-    Ball* m_pBall;
+    TextureObject* m_pBall;
 
     PlayerController* m_pPlayerController;
 

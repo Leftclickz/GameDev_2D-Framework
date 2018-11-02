@@ -4,11 +4,13 @@
 struct VertexFormat
 {
     vec2 m_Pos;
+	vec2 m_UVCoord;
     MyColor m_Color;
 
-    VertexFormat(vec2 pos, MyColor color)
+    VertexFormat(vec2 pos, vec2 uv, MyColor color)
     {
         m_Pos = pos;
+		m_UVCoord = uv;
         m_Color = color;
     }
 };
@@ -29,6 +31,7 @@ public:
     void SetShader(ShaderProgram* pShader) { m_pShader = pShader; }
 
     void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale);
+	void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, ImageData texture);
 
     void GenerateTriangle();
     void GenerateCircle();

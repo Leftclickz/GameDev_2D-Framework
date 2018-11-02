@@ -1,10 +1,13 @@
 #version 120
 
 attribute vec2 a_Position;
+attribute vec2 a_UVCoord;
+
+varying vec2 v_UVCoord;
 
 void main()
 {
-    vec2 objectpos = a_Position;
+	v_UVCoord = a_UVCoord;
 
-    gl_Position = vec4( objectpos, 0, 1 );
+    gl_Position = vec4( a_Position, 0, 1 );
 }

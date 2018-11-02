@@ -51,12 +51,21 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
         glEnableVertexAttribArray( loc );
     }
 
+	GLint uv = glGetAttribLocation(m_pShader->GetProgram(), "a_UVCoord");
+	if (uv != -1)
+	{
+		glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_UVCoord));
+		glEnableVertexAttribArray(uv);
+	}
+
     loc = glGetAttribLocation( m_pShader->GetProgram(), "a_Color" );
     if( loc != -1 )
     {
         glVertexAttribPointer( loc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Color) );
         glEnableVertexAttribArray( loc );
     }
+
+
 
     // Set up shader.
     GLuint shader = m_pShader->GetProgram();
@@ -77,6 +86,18 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
     CheckForGLErrors();
 }
 
+void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, ImageData texture)
+{
+	GLint utex = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
+	if (utex != -1)
+		glUniform1i(utex, texture.texture_index);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture.gl_index);
+
+	Draw(objectPos, objectAngle, objectScale, camPos, projScale);
+}
+
 void Mesh::GenerateTriangle()
 {
     // ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
@@ -84,9 +105,9 @@ void Mesh::GenerateTriangle()
 
     // Vertex info for a diamond.
     VertexFormat vertexAttributes[] = {
-        VertexFormat( vec2(  0.0f,  1.0f ), MyColor( 255, 255, 255, 255 ) ),
-        VertexFormat( vec2( -0.5f, -1.0f ), MyColor( 255, 255, 255, 255 ) ),
-        VertexFormat( vec2(  0.5f, -1.0f ), MyColor( 255, 255, 255, 255 ) ),
+        VertexFormat( vec2(  0.0f,  1.0f ), vec2(0.5f,1.0f), MyColor( 255, 255, 255, 255 ) ),
+        VertexFormat( vec2( -0.5f, -1.0f ), vec2(0.0f,0.0f), MyColor( 255, 255, 255, 255 ) ),
+        VertexFormat( vec2(  0.5f, -1.0f ), vec2(1.0f,0.0f), MyColor( 255, 255, 255, 255 ) ),
     };
 
     // Gen and fill buffer with our attributes.
@@ -109,10 +130,10 @@ void Mesh::GenerateCircle()
 
     // Vertex position info for a diamond.
     VertexFormat vertexAttributes[] = {
-        VertexFormat( vec2(  0.0f,  1.0f ), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2( -1.0f,  0.0f ), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2(  1.0f,  0.0f ), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2(  0.0f, -1.0f ), MyColor(   0, 255,   0, 255 ) ),
+        VertexFormat( vec2(  0.0f,  1.0f ), vec2(0.5f,1.0f), MyColor(   0, 255,   0, 255 ) ),
+        VertexFormat( vec2( -1.0f,  0.0f ), vec2(0.0f,0.5f), MyColor(   0, 255,   0, 255 ) ),
+        VertexFormat( vec2(  1.0f,  0.0f ), vec2(1.0f,0.5f), MyColor(   0, 255,   0, 255 ) ),
+        VertexFormat( vec2(  0.0f, -1.0f ),vec2(0.5f,0.0f), MyColor(   0, 255,   0, 255 ) ),
     };
 
     // Gen and fill buffer with our attributes.

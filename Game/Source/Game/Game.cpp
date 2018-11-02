@@ -6,6 +6,8 @@
 #include "GameObjects/Player.h"
 #include "GameObjects/Ball.h"
 #include "GameObjects/PlayerController.h"
+#include "ImageManager/ImageManager.h"
+
 
 Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
@@ -33,8 +35,8 @@ Game::Game(Framework* pFramework)
 		cJSON* Root = cJSON_Parse(str);
 		cJSON* obj = cJSON_GetObjectItem(Root, "Game Object");
 
-		float x = cJSON_GetObjectItem(obj, "x")->valuedouble;
-		float y = cJSON_GetObjectItem(obj, "y")->valuedouble;
+		float x = (float)cJSON_GetObjectItem(obj, "x")->valuedouble;
+		float y = (float)cJSON_GetObjectItem(obj, "y")->valuedouble;
 
 		cJSON_Delete(Root);
 	}
@@ -62,6 +64,8 @@ Game::~Game()
     delete m_pMeshCircle;
 
     delete m_pShader;
+
+	ImageManager::Release();
 }
 
 void Game::OnSurfaceChanged(unsigned int width, unsigned int height)
@@ -97,16 +101,22 @@ void Game::LoadContent()
     m_pMeshCircle->SetShader( m_pShader );
     m_pMeshCircle->GenerateCircle();
 
+	ImageManager::Reserve(10);
+	ImageManager::LoadImageData("Miku.png");
+
     // Create our GameObjects.
     m_pPlayer = new Player( this, m_pMeshTriangle );
-    m_pBall = new Ball( this, m_pMeshCircle );
+    m_pBall = new TextureObject( this, m_pMeshCircle, "Miku.png" );
 
     // Assign our controllers.
     m_pPlayerController = new PlayerController();
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
+
+
     CheckForGLErrors();
 }
+
 
 void Game::OnEvent(Event* pEvent)
 {

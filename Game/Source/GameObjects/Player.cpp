@@ -67,5 +67,5 @@ void Player::Update(float deltatime)
 
 void Player::Draw(vec2 camPos, vec2 projScale)
 {
-    m_pMesh->Draw( m_Position, m_Angle, 1, camPos, projScale );
+    m_pMesh->Draw( m_Position, m_Angle, 5, camPos, projScale );
 }

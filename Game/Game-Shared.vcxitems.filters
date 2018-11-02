@@ -22,6 +22,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.cpp">
       <Filter>Source\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp">
+      <Filter>Source\ImageManager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.cpp">
+      <Filter>Source\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -45,6 +51,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.h">
       <Filter>Source\GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h">
+      <Filter>Source\ImageManager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Data">
@@ -59,11 +69,14 @@
     <Filter Include="Source\Game">
       <UniqueIdentifier>{617175d8-08e5-4be8-82ec-e3f1163403f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Mesh">
-      <UniqueIdentifier>{10a6275b-242b-42ae-b975-117a759fcea9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\GameObjects">
       <UniqueIdentifier>{09d079c9-e37f-46f2-82bd-ff6e2269bace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ImageManager">
+      <UniqueIdentifier>{1d88fbd3-5c55-4874-b09b-d2d3d34c2f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Mesh">
+      <UniqueIdentifier>{10a6275b-242b-42ae-b975-117a759fcea9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +94,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="$(MSBuildThisFileDirectory)..\readme.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)..\readme.txt">
+      <Filter>Source</Filter>
+    </Text>
   </ItemGroup>
 </Project>

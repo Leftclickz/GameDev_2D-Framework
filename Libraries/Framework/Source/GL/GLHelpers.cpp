@@ -16,32 +16,28 @@ void CheckForGLErrors()
 
 GLuint LoadTexture(const char* filename)
 {
-    //unsigned char* pngbuffer;
-    //unsigned int width, height;
-    //long filesize;
-    //unsigned char* filebuffer = (unsigned char*)LoadCompleteFile( filename, &filesize );
-    //unsigned int result = lodepng_decode32( &pngbuffer, &width, &height, filebuffer, filesize );
-    //delete[] filebuffer;
-    //assert( result == 0 );
+    unsigned char* pngbuffer;
+    unsigned int width, height;
+    long filesize;
+    unsigned char* filebuffer = (unsigned char*)LoadCompleteFile( filename, &filesize );
+    unsigned int result = lodepng_decode32( &pngbuffer, &width, &height, filebuffer, filesize );
+    delete[] filebuffer;
+    assert( result == 0 );
 
-    //Flip32BitImageVertically( pngbuffer, width, height );
+    Flip32BitImageVertically( pngbuffer, width, height );
 
-    //GLuint texhandle = 0;
-    //glGenTextures( 1, &texhandle );
-    //glActiveTexture( GL_TEXTURE0 );
-    //glBindTexture( GL_TEXTURE_2D, texhandle );
+    GLuint texhandle = 0;
+    glGenTextures( 1, &texhandle );
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, texhandle );
 
-    //glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pngbuffer );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pngbuffer );
 
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    free( pngbuffer );
 
-    //glBindTexture( GL_TEXTURE_2D, 0 );
-
-    //free( pngbuffer );
-
-    //return texhandle;
-    return 0;
+    return texhandle;
 }
 
 GLuint LoadTextureCubemap(const char** filenames, GLuint oldtexturehandle)
