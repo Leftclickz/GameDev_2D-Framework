@@ -5,6 +5,7 @@ AtlasObject::AtlasObject(GameCore* pGame, Mesh* pMesh, const char* pName) : Game
 	m_Image = ImageManager::UseImageAtlas(pName);
 }
 
+//Generate an image using Atlas data. Requires the name of a sprite inside the image. Omit file endings.
 void AtlasObject::UseFrame(const char* name)
 {
 	m_Image->UseFrame(name);

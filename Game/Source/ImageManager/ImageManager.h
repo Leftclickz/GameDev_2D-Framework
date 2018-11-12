@@ -32,6 +32,8 @@ public:
 
 	SpriteAtlas() {}
 	SpriteAtlas(Sprite* ATLAS);
+
+	//Generate an image using Atlas data. Requires the name of a sprite inside the image. Omit file endings.
 	void UseFrame(const char* image_name);
 
 };

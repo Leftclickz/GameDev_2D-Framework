@@ -18,7 +18,7 @@ Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader,
 
 	m_PrimitiveType = primitive;
 	m_pShader = shader;
-	m_NumVerts = 4;
+	m_NumVerts = vert_count;
 	Generate(mesh_data);
 }
 
@@ -166,8 +166,17 @@ void Mesh::GenerateCircle()
     CheckForGLErrors();
 }
 
+void Mesh::Generate(const VertexFormat* data, int vertcount, GLuint primitive)
+{
+	m_NumVerts = vertcount;
+	m_PrimitiveType = primitive;
+
+	Generate(data);
+}
+
 void Mesh::Generate(const VertexFormat* data)
 {
+	
 	// ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
 	assert(m_VBO == 0);
 
@@ -183,10 +192,12 @@ void Mesh::Generate(const VertexFormat* data)
 	CheckForGLErrors();
 }
 
+
+//Generate a mesh from Atlas data.
 void Mesh::GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size)
 {
-	// ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
 
+	// ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
 	assert(m_VBO == 0);
 
 	m_NumVerts = 4;

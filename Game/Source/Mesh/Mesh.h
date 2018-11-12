@@ -24,6 +24,9 @@ protected:
     GLenum m_PrimitiveType;
     unsigned int m_NumVerts;
 
+	//Internal mesh generation.
+	void Generate(const VertexFormat* data);
+
 public:
     Mesh();
 	Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, GLuint primitive);
@@ -37,7 +40,12 @@ public:
 
     void GenerateTriangle();
     void GenerateCircle();
-	void Generate(const VertexFormat* data);
+
+
+
+	//Generate a mesh from paramaters. Default primitive is TRIANGLE_FAN
+	void Generate(const VertexFormat* data, int vertcount, GLuint primitive = GL_TRIANGLE_FAN);
+	//Generate a mesh from Atlas data.
 	void GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size);
 };
 
