@@ -21,13 +21,13 @@ void PlayerController::OnEvent(Event* pEvent)
                 if( keyID == VK_RIGHT || keyID == 'D' ) { m_TurnRight = true; }
             }
 
-            if( pInput->GetInputState() == InputState_Released )
-            {
-                if( keyID == VK_UP    || keyID == 'W' ) { m_Forward = false; }
-                if( keyID == VK_DOWN  || keyID == 'S' ) { m_Reverse = false; }
-                if( keyID == VK_LEFT  || keyID == 'A' ) { m_TurnLeft = false; }
-                if( keyID == VK_RIGHT || keyID == 'D' ) { m_TurnRight = false; }
-            }
+            //if( pInput->GetInputState() == InputState_Released )
+            //{
+            //    if( keyID == VK_UP    || keyID == 'W' ) { m_Forward = false; }
+            //    if( keyID == VK_DOWN  || keyID == 'S' ) { m_Reverse = false; }
+            //    if( keyID == VK_LEFT  || keyID == 'A' ) { m_TurnLeft = false; }
+            //    if( keyID == VK_RIGHT || keyID == 'D' ) { m_TurnRight = false; }
+            //}
         }
 #endif
     }

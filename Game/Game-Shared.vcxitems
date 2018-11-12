@@ -15,6 +15,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
@@ -22,10 +23,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game_Consts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />

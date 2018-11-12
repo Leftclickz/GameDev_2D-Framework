@@ -3,9 +3,9 @@
 
 class Ball : public GameObject
 {
-    const float Ball_START_X_POSITION_PCT = 0.5f;
-    const float Ball_START_Y_POSITION_PCT = 0.5f;
-    const float Ball_SPEED_WHEN_HIT       = 30.0f; // Units per second
+    //const float Ball_START_X_POSITION_PCT = 0.5f;
+    //const float Ball_START_Y_POSITION_PCT = 0.5f;
+    //const float Ball_SPEED_WHEN_HIT       = 30.0f; // Units per second
 
 protected:
     float m_Speed;

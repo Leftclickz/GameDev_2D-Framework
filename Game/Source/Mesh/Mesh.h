@@ -26,15 +26,19 @@ protected:
 
 public:
     Mesh();
+	Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, GLuint primitive);
+
     virtual ~Mesh();
 
     void SetShader(ShaderProgram* pShader) { m_pShader = pShader; }
 
     void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale);
-	void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, ImageData texture);
+	void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, struct Sprite *texture);
 
     void GenerateTriangle();
     void GenerateCircle();
+	void Generate(const VertexFormat* data);
+	void GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size);
 };
 
 #endif //__Mesh_H__

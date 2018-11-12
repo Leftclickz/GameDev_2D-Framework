@@ -9,12 +9,12 @@ void CheckForGLErrors()
     {
         OutputMessage( "glGetError\n" );
 #if _WIN32
-        assert( false );
+//        assert( false );
 #endif
     }
 }
 
-GLuint LoadTexture(const char* filename)
+GLuint LoadTexture(const char* filename, unsigned int TU_index)
 {
     unsigned char* pngbuffer;
     unsigned int width, height;
@@ -26,10 +26,10 @@ GLuint LoadTexture(const char* filename)
 
     Flip32BitImageVertically( pngbuffer, width, height );
 
-    GLuint texhandle = 0;
-    glGenTextures( 1, &texhandle );
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, texhandle );
+    GLuint gl_texture_index = 0;
+    glGenTextures( 1, &gl_texture_index);
+    glActiveTexture( GL_TEXTURE0 + TU_index);
+    glBindTexture( GL_TEXTURE_2D, gl_texture_index);
 
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pngbuffer );
 
@@ -37,7 +37,10 @@ GLuint LoadTexture(const char* filename)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     free( pngbuffer );
 
-    return texhandle;
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+    return gl_texture_index;
 }
 
 GLuint LoadTextureCubemap(const char** filenames, GLuint oldtexturehandle)

@@ -7,6 +7,7 @@ attribute vec2 a_UVCoord;
 uniform vec2 u_ObjectScale;
 uniform float u_ObjectAngleRadians;
 uniform vec2 u_ObjectPosition;
+uniform vec2 u_UVOffset;
 
 uniform vec2 u_CameraTranslation;
 uniform vec2 u_ProjectionScale;
@@ -29,5 +30,6 @@ void main()
     gl_Position = vec4( finalPos, 0, 1 );
 
     v_Color = a_Color;
-	v_UVCoord = a_UVCoord;
+
+	v_UVCoord = a_UVCoord + u_UVOffset;
 }

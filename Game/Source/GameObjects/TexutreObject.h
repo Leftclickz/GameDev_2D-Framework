@@ -13,7 +13,7 @@ public:
 
 protected:
 
-	ImageData m_Image;
+	Sprite *m_Image;
 
 
 };

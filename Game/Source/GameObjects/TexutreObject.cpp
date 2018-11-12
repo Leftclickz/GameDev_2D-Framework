@@ -4,7 +4,7 @@
 TextureObject::TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName) : GameObject(pGame,pMesh)
 {
 	m_Image = ImageManager::UseImage(pName);
-	assert(m_Image.gl_index != -1);
+	assert(m_Image->GL_texture_index != -1);
 }
 
 void TextureObject::Draw(vec2 camPos, vec2 projScale)

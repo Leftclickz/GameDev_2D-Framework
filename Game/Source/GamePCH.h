@@ -3,8 +3,10 @@
 
 #include "../../Libraries/Framework/Source/FrameworkPCH.h"
 
+#include "Game/Game_Consts.h"
 #include "ImageManager/ImageManager.h"
 #include "GameObjects/TexutreObject.h"
+#include "GameObjects/AtlasObject.h"
 
 
 

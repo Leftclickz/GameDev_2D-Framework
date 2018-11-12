@@ -18,6 +18,11 @@ public:
     bool IsReverseHeld() { return m_Reverse; }
     bool IsTurnLeftHeld() { return m_TurnLeft; }
     bool IsTurnRightHeld() { return m_TurnRight; }
+
+	void SetUp(bool value = false) { m_Forward = false; }
+	void SetDown(bool value = false) { m_Reverse = false; }
+	void SetLeft(bool value = false) { m_TurnLeft = false; }
+	void SetRight(bool value = false) { m_TurnRight = false; }
 };
 
 

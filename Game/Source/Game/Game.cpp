@@ -13,9 +13,10 @@ Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
 {
 
-	char* str;
+	//char* str;
 
 	//Create
+	/*
 	{
 		cJSON* Root = cJSON_CreateObject();
 
@@ -40,8 +41,8 @@ Game::Game(Framework* pFramework)
 
 		cJSON_Delete(Root);
 	}
-
-	free(str);
+	*/
+	//free(str);
 
     m_pShader = 0;
     m_pMeshTriangle = 0;
@@ -60,8 +61,10 @@ Game::~Game()
     delete m_pPlayer;
     delete m_pBall;
 
+	delete m_EmptyMesh;
     delete m_pMeshTriangle;
     delete m_pMeshCircle;
+	delete m_MeshTile;
 
     delete m_pShader;
 
@@ -97,22 +100,35 @@ void Game::LoadContent()
     m_pMeshTriangle->SetShader( m_pShader );
     m_pMeshTriangle->GenerateTriangle();
 
+	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_pShader, GL_TRIANGLE_FAN);
+
     m_pMeshCircle = new Mesh();
     m_pMeshCircle->SetShader( m_pShader );
     m_pMeshCircle->GenerateCircle();
 
+	m_EmptyMesh = new Mesh();
+	m_EmptyMesh->SetShader(m_pShader);
+
+	ImageManager::Initialize();
 	ImageManager::Reserve(10);
-	ImageManager::LoadImageData("Miku.png");
+
+	ImageManager::LoadImageAtlas("Bomberman");
+	ImageManager::LoadImageData("Default");
+	ImageManager::LoadImageData("Miku");
+	ImageManager::LoadImageData("Pixel_Miku");
 
     // Create our GameObjects.
-    m_pPlayer = new Player( this, m_pMeshTriangle );
-    m_pBall = new TextureObject( this, m_pMeshCircle, "Miku.png" );
+    m_pPlayer = new Player( this, m_MeshTile, "Miku");
+
+	//Testing sprite atlas
+    m_pBall = new AtlasObject( this, m_EmptyMesh, "Bomberman" );
+	m_pBall->UseFrame("BM_WalkUp3");
 
     // Assign our controllers.
     m_pPlayerController = new PlayerController();
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
-
+	m_pBall->SetPosition(vec2(-50.0f, -50.0f));
 
     CheckForGLErrors();
 }
@@ -140,11 +156,9 @@ void Game::Draw()
 #endif
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    vec2 halfWorldSize = vec2( Game_WORLD_SIZE_X/2.0f, Game_WORLD_SIZE_Y/2.0f );
-
     // Draw our game objects.
-    m_pPlayer->Draw( halfWorldSize, 1/halfWorldSize );
-    m_pBall->Draw( halfWorldSize, 1/halfWorldSize );
+    m_pPlayer->Draw( m_pPlayer->GetPosition(), 1/ HALF_SCREEN * 4);
+    m_pBall->Draw(m_pPlayer->GetPosition(), 1/ HALF_SCREEN * 4);
 
     CheckForGLErrors();
 }

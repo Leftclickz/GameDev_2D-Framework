@@ -10,16 +10,18 @@ class PlayerController;
 class Game : public GameCore
 {
 public:
-    static const int Game_WORLD_SIZE_X = 50;
-    static const int Game_WORLD_SIZE_Y = 50;
+    
+
 
 protected:
     ShaderProgram* m_pShader;
     Mesh* m_pMeshTriangle;
     Mesh* m_pMeshCircle;
+	Mesh* m_MeshTile;
+	Mesh* m_EmptyMesh;
 
     Player* m_pPlayer;
-    TextureObject* m_pBall;
+    AtlasObject* m_pBall;
 
     PlayerController* m_pPlayerController;
 

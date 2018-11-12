@@ -10,11 +10,11 @@ Ball::Ball(GameCore* pGame, Mesh* pMesh)
 , m_Speed( 0 )
 {
     // Get the world width and height.
-    float worldWidth = Game::Game_WORLD_SIZE_X;
-    float worldHeight = Game::Game_WORLD_SIZE_Y;
+    //int worldWidth = SCREEN_SIZE_X;
+    //int worldHeight = SCREEN_SIZE_Y;
 
     // Set the Ball's initial position.
-    m_Position.Set( worldWidth * Ball_START_X_POSITION_PCT, worldHeight * Ball_START_Y_POSITION_PCT );
+    //m_Position.Set( worldWidth * Ball_START_X_POSITION_PCT, worldHeight * Ball_START_Y_POSITION_PCT );
 }
     
 Ball::~Ball()
@@ -26,17 +26,18 @@ void Ball::Update(float deltatime)
     //GameObject::Update( deltatime );
 
     // Calculate the Ball's velocity based on the speed and the angle.
-    float anglerad = m_Angle * PI / 180;
-    vec2 velocity = m_Speed * vec2( cosf(anglerad), sinf(anglerad) );
+    //float anglerad = m_Angle * PI / 180;
+    //vec2 velocity = m_Speed * vec2( cosf(anglerad), sinf(anglerad) );
         
     // Apply the velocity to the Ball's position.
-    m_Position += velocity * deltatime;
+    //m_Position += velocity * deltatime;
     
     // Get the world width and height.
-    float worldWidth = Game::Game_WORLD_SIZE_X;
-    float worldHeight = Game::Game_WORLD_SIZE_Y;
+    //int worldWidth = SCREEN_SIZE_X;
+    //int worldHeight = SCREEN_SIZE_Y;
 
     // Vertical bounds check
+	/*
     if( m_Position.y + GetRadius() > worldHeight )
     {
         // Calculate the Ball's reflected angle.
@@ -74,6 +75,7 @@ void Ball::Update(float deltatime)
 
     // Slow down the Ball.
     m_Speed *= 0.99f;
+	*/
 }
 
 void Ball::Draw(vec2 camPos, vec2 projScale)
@@ -83,9 +85,9 @@ void Ball::Draw(vec2 camPos, vec2 projScale)
 
 void Ball::OnCollision(GameObject* pOtherGameObject)
 {
-    vec2 dir = m_Position - pOtherGameObject->GetPosition();
-    dir.Normalize();
+    //vec2 dir = m_Position - pOtherGameObject->GetPosition();
+    //dir.Normalize();
 
-    m_Angle = atan2( dir.y, dir.x ) / PI * 180;
-    m_Speed = Ball_SPEED_WHEN_HIT;
+    //m_Angle = atan2( dir.y, dir.x ) / PI * 180;
+   // m_Speed = Ball_SPEED_WHEN_HIT;
 }

@@ -28,6 +28,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.cpp">
       <Filter>Source\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp">
+      <Filter>Source\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -54,7 +57,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h">
       <Filter>Source\ImageManager</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game_Consts.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h">
+      <Filter>Source\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h">
+      <Filter>Source\GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Data">

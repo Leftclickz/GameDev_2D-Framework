@@ -3,7 +3,7 @@
 
 void CheckForGLErrors();
 
-GLuint LoadTexture(const char* filename);
+GLuint LoadTexture(const char* filename, unsigned int index);
 GLuint LoadTextureCubemap(const char** filenames, GLuint oldtexturehandle = 0);
 void Flip32BitImageVertically(unsigned char* buffer, unsigned int width, unsigned int height);
 
