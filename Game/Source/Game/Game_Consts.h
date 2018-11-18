@@ -2,18 +2,22 @@
 #include "Mesh/Mesh.h"
 
 
-static const ivec2 MAP_SIZE = ivec2(20, 12);
+//Generic tile size
 static const vec2 TILE_SIZE = vec2(50.0f, 50.0f);
 
-static const int SCREEN_SIZE_X = MAP_SIZE.x * (int)TILE_SIZE.x;
-static const int SCREEN_SIZE_Y = MAP_SIZE.y * (int)TILE_SIZE.y;
+//The amount of visible tile indices on the screen at a time
+static const ivec2 SCREEN_TILE_DIMENSIONS = ivec2(20, 12);
 
+//Screen size in world units
+static const int SCREEN_SIZE_X = SCREEN_TILE_DIMENSIONS.x * (int)TILE_SIZE.x;
+static const int SCREEN_SIZE_Y = SCREEN_TILE_DIMENSIONS.y * (int)TILE_SIZE.y;
+
+//The total tiles in a level
+static const ivec2 LEVEL_TILE_DIMENSIONS = ivec2(SCREEN_TILE_DIMENSIONS.x * 2, SCREEN_TILE_DIMENSIONS.y * 3);
+
+//Various vectors in world units.
 static const vec2 HALF_SCREEN = vec2((float)SCREEN_SIZE_X, (float)SCREEN_SIZE_Y) * 0.5f;
-
-static const int LEVEL_SIZE_X = SCREEN_SIZE_X * 2;
-static const int LEVEL_SIZE_Y = SCREEN_SIZE_Y * 4;
-
-static const vec2 HALF_LEVEL = vec2((float)LEVEL_SIZE_X, (float)LEVEL_SIZE_Y) * 0.5f;
+static const vec2 HALF_LEVEL = vec2((float)LEVEL_TILE_DIMENSIONS.x, (float)LEVEL_TILE_DIMENSIONS.y) * 0.5f;
 
 namespace TILE
 {

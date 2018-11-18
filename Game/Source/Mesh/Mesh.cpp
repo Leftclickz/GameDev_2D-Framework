@@ -76,9 +76,6 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
         glEnableVertexAttribArray( loc );
     }
 
-
-
-
     // Set up shader.
     GLuint shader = m_pShader->GetProgram();
     glUseProgram( shader );
@@ -89,7 +86,8 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
     SetUniform2f( shader, "u_ObjectPosition", objectPos );
     SetUniform2f( shader, "u_CameraTranslation", cameraPos * -1 );
     SetUniform2f( shader, "u_ProjectionScale", projectionScale );
-	SetUniform2f(shader, "u_UVOffset", vec2(0.0f, 0.0f));
+
+
 
     CheckForGLErrors();
 
@@ -100,17 +98,37 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
     CheckForGLErrors();
 }
 
-void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite* texture)
+void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite *texture)
 {
-	
-	GLint textureLoc = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
-	if (textureLoc != -1)
-		glUniform1i(textureLoc, texture->TU_index);
+	GLuint shader = m_pShader->GetProgram();
+	glUseProgram(shader);
 
 	glActiveTexture(GL_TEXTURE0 + texture->TU_index);
 	glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
 
-	CheckForGLErrors();
+	GLint textureLoc = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
+	if (textureLoc != -1)
+		glUniform1i(textureLoc, texture->TU_index);
+
+	SetUniform2f(shader, "u_UVOffset", vec2(0.0f, 0.0f));
+	SetUniform2f(shader, "u_UVScale", vec2(1.0f, 1.0f));
+
+	Draw(objectPos, objectAngle, objectScale, camPos, projScale);
+}
+
+void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite* texture, AtlasChild *sprite_data)
+{
+	GLuint shader = m_pShader->GetProgram();
+	glUseProgram(shader);
+
+	glActiveTexture(GL_TEXTURE0 + texture->TU_index);
+	glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
+	GLint textureLoc = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
+	if (textureLoc != -1)
+		glUniform1i(textureLoc, texture->TU_index);
+
+	SetUniform2f(shader, "u_UVOffset", sprite_data->sprite_UV_Offset);
+	SetUniform2f(shader, "u_UVScale", sprite_data->sprite_UV_Scale);
 
 	Draw(objectPos, objectAngle, objectScale, camPos, projScale);
 }
@@ -194,9 +212,8 @@ void Mesh::Generate(const VertexFormat* data)
 
 
 //Generate a mesh from Atlas data.
-void Mesh::GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size)
+void Mesh::GenerateMeshFromAtlas(vec2 sprite_size)
 {
-
 	// ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
 	assert(m_VBO == 0);
 
@@ -205,10 +222,10 @@ void Mesh::GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size)
 
 
 	VertexFormat data[] = {
-		VertexFormat(vec2(0.0f,0.0f), vec2(offset.x / atlas_size.x,offset.y / atlas_size.y), MyColor()),
-		VertexFormat(vec2(sprite_size.x,0.0f), vec2((offset.x + sprite_size.x) / atlas_size.x, offset.y / atlas_size.y), MyColor()),
-		VertexFormat(vec2(sprite_size.x,sprite_size.y), vec2((offset.x + sprite_size.x) / atlas_size.x, (offset.y + sprite_size.y) / atlas_size.y), MyColor()),
-		VertexFormat(vec2(0.0f,sprite_size.y), vec2(offset.x / atlas_size.x, (offset.y + sprite_size.y) / atlas_size.y), MyColor())
+		VertexFormat(vec2(0.0f,0.0f), vec2(0.f,0.0f), MyColor()),
+		VertexFormat(vec2(sprite_size.x,0.0f), vec2(1.0f,0.0f), MyColor()),
+		VertexFormat(vec2(sprite_size.x,sprite_size.y), vec2(1.0f,1.0f), MyColor()),
+		VertexFormat(vec2(0.0f,sprite_size.y), vec2(0.0f,1.0f), MyColor())
 	};
 
 	// Gen and fill buffer with our attributes.
@@ -216,6 +233,4 @@ void Mesh::GenerateMeshFromAtlas(vec2 sprite_size, vec2 offset, vec2 atlas_size)
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexFormat) * m_NumVerts, data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 }

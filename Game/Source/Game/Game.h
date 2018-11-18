@@ -4,14 +4,15 @@
 class Ball;
 class Mesh;
 class GameObject;
+class AnimatedObject;
 class Player;
 class PlayerController;
+class Level;
 
 class Game : public GameCore
 {
 public:
     
-
 
 protected:
     ShaderProgram* m_pShader;
@@ -21,7 +22,9 @@ protected:
 	Mesh* m_EmptyMesh;
 
     Player* m_pPlayer;
-    AtlasObject* m_pBall;
+    AnimatedObject* m_pBall;
+
+	Level* m_TestLevel;
 
     PlayerController* m_pPlayerController;
 

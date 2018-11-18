@@ -8,6 +8,7 @@ uniform vec2 u_ObjectScale;
 uniform float u_ObjectAngleRadians;
 uniform vec2 u_ObjectPosition;
 uniform vec2 u_UVOffset;
+uniform vec2 u_UVScale;
 
 uniform vec2 u_CameraTranslation;
 uniform vec2 u_ProjectionScale;
@@ -31,5 +32,8 @@ void main()
 
     v_Color = a_Color;
 
-	v_UVCoord = a_UVCoord + u_UVOffset;
+	vec2 UV_Final = a_UVCoord * u_UVScale;
+	UV_Final += u_UVOffset;
+
+	v_UVCoord = UV_Final;
 }

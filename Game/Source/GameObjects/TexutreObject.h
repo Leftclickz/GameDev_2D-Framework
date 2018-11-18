@@ -15,6 +15,5 @@ protected:
 
 	Sprite *m_Image;
 
-
 };
 

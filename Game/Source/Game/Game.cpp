@@ -65,6 +65,7 @@ Game::~Game()
     delete m_pMeshTriangle;
     delete m_pMeshCircle;
 	delete m_MeshTile;
+	delete m_TestLevel;
 
     delete m_pShader;
 
@@ -106,29 +107,36 @@ void Game::LoadContent()
     m_pMeshCircle->SetShader( m_pShader );
     m_pMeshCircle->GenerateCircle();
 
-	m_EmptyMesh = new Mesh();
-	m_EmptyMesh->SetShader(m_pShader);
+	m_EmptyMesh = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_pShader, GL_TRIANGLE_FAN);
 
 	ImageManager::Initialize();
 	ImageManager::Reserve(10);
 
-	ImageManager::LoadImageAtlas("Bomberman");
+	ImageManager::LoadImageAtlas("Bomberman", "SpriteTool");
 	ImageManager::LoadImageData("Default");
 	ImageManager::LoadImageData("Miku");
 	ImageManager::LoadImageData("Pixel_Miku");
 
-    // Create our GameObjects.
-    m_pPlayer = new Player( this, m_MeshTile, "Miku");
+	ImageManager::CreateAnimation("BomberMan_WalkingDown", "Bomberman");
+	AnimatedSprite* animation = ImageManager::UseAnimation("BomberMan_WalkingDown");
+	animation->BuildAnimationArray(2);
+	animation->UseFrame("BM_WalkDown2");
+	animation->UseFrame("BM_WalkDown3");
+	animation->SetFramerate(4);
 
-	//Testing sprite atlas
-    m_pBall = new AtlasObject( this, m_EmptyMesh, "Bomberman" );
-	m_pBall->UseFrame("BM_WalkUp3");
+    // Create our GameObjects.
+    m_pPlayer = new Player( this, m_MeshTile, "Pixel_Miku");
+
+	//Testing animated sprite atlas
+    m_pBall = new AnimatedObject( this, m_EmptyMesh, "BomberMan_WalkingDown" );
 
     // Assign our controllers.
     m_pPlayerController = new PlayerController();
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
-	m_pBall->SetPosition(vec2(-50.0f, -50.0f));
+	m_pBall->SetPosition(vec2(50.0f, 50.0f));
+
+	m_TestLevel = new Level(this, m_MeshTile, "test");
 
     CheckForGLErrors();
 }
@@ -157,8 +165,9 @@ void Game::Draw()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // Draw our game objects.
-    m_pPlayer->Draw( m_pPlayer->GetPosition(), 1/ HALF_SCREEN * 4);
-    m_pBall->Draw(m_pPlayer->GetPosition(), 1/ HALF_SCREEN * 4);
+	m_TestLevel->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
+    m_pPlayer->Draw( m_pPlayer->GetPosition(), 1/ HALF_SCREEN);
+    m_pBall->Draw(m_pPlayer->GetPosition(), 1/ HALF_SCREEN);
 
     CheckForGLErrors();
 }

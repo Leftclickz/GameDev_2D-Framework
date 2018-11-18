@@ -9,7 +9,7 @@ void CheckForGLErrors()
     {
         OutputMessage( "glGetError\n" );
 #if _WIN32
-//        assert( false );
+        assert( false );
 #endif
     }
 }

@@ -15,9 +15,11 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
@@ -25,12 +27,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Game\Game_Consts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\SpriteDataStructures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Level\Level.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.cpp" />
@@ -39,7 +46,10 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\SpriteDataStructures.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Level\Level.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Color.frag" />
