@@ -21,13 +21,16 @@ static const vec2 HALF_LEVEL = vec2((float)LEVEL_TILE_DIMENSIONS.x, (float)LEVEL
 
 namespace TILE
 {
-	static const MyColor DEFAULT_COLOR = MyColor(255, 255, 255, 255);
+	static MyColor WHITE = MyColor(255, 255, 255, 255);
+	static MyColor RED = MyColor(255, 0, 0, 255);
+	static MyColor GREEN = MyColor(0, 255, 0, 255);
+	static MyColor BLUE = MyColor(0, 0, 255, 255);
 
 	static const VertexFormat TILE_MESH[] = {
-		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), DEFAULT_COLOR),
-		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), DEFAULT_COLOR),
-		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), DEFAULT_COLOR),
-		VertexFormat(vec2(0.0f,50.0f),vec2(0.0f,1.0f), DEFAULT_COLOR),
+		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
+		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
+		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), WHITE),
+		VertexFormat(vec2(0.0f,50.0f),vec2(0.0f,1.0f), WHITE),
 	};
 
 	static const int TILE_VERT_COUNT = 4;

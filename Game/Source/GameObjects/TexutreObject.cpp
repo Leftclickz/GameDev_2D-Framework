@@ -9,7 +9,7 @@ TextureObject::TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName) : 
 
 void TextureObject::Draw(vec2 camPos, vec2 projScale)
 {
-
+	GameObject::Draw(camPos, projScale);
 	if (m_pMesh != 0)
-		m_pMesh->Draw(m_Position, m_Angle, 1, camPos, projScale, m_Image);
+		m_pMesh->Draw(&m_Transform, m_Image);
 }

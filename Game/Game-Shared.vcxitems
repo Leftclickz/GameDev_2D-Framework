@@ -17,8 +17,8 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.h" />
@@ -35,8 +35,8 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.cpp" />

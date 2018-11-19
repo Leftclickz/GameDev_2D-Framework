@@ -6,18 +6,21 @@
 Mesh::Mesh()
 {
     m_VBO = 0;
-    m_pShader = 0;
+    m_TextureShader = 0;
 
     m_PrimitiveType = -1;
     m_NumVerts = 0;
 }
     
-Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, GLuint primitive)
+Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, ShaderProgram* debug, GLuint primitive)
 {
 	m_VBO = 0;
-
+	m_DrawDebugLines = false;
 	m_PrimitiveType = primitive;
-	m_pShader = shader;
+
+	m_TextureShader = shader;
+	m_DebugShader = debug;
+
 	m_NumVerts = vert_count;
 	Generate(mesh_data);
 }
@@ -25,6 +28,18 @@ Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader,
 Mesh::~Mesh()
 {
     glDeleteBuffers( 1, &m_VBO );
+}
+
+void Mesh::SetDebugColor(std::string tag_name)
+{
+	if (tag_name == "Default")
+		m_DebugColor = &TILE::BLUE;
+	else if (tag_name == "Tile")
+		m_DebugColor = &TILE::WHITE;
+	else if (tag_name == "Enemy")
+		m_DebugColor = &TILE::RED;
+	else if (tag_name == "Player")
+		m_DebugColor = &TILE::GREEN;
 }
 
 void SetUniform1f(GLuint shader, const char* uniformName, float value)
@@ -45,51 +60,47 @@ void SetUniform2f(GLuint shader, const char* uniformName, vec2 value)
     }
 }
 
-void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 cameraPos, vec2 projectionScale)
+//Internal swapping of shader programs
+GLuint Mesh::SetActiveShader(ShaderProgram* shader)
 {
-    assert( m_PrimitiveType != -1 );
-    assert( m_NumVerts != 0 );
-    assert( m_pShader != 0 );
-    assert( m_pShader->GetProgram() != 0 );
+	GLuint shadeObj = shader->GetProgram();
+	glUseProgram(shadeObj);
+	return shadeObj;
+}
 
+//Internal draw call for textures.
+void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
+{
     // Bind buffer and set up attributes.
     glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
 
-    GLint loc = glGetAttribLocation( m_pShader->GetProgram(), "a_Position" );
+    GLint loc = glGetAttribLocation( shader, "a_Position" );
     if( loc != -1 )
     {
         glVertexAttribPointer( loc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Pos) );
         glEnableVertexAttribArray( loc );
     }
 
-	GLint uv = glGetAttribLocation(m_pShader->GetProgram(), "a_UVCoord");
-	if (uv != -1)
+	loc = glGetAttribLocation(shader, "a_UVCoord");
+	if (loc != -1)
 	{
-		glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_UVCoord));
-		glEnableVertexAttribArray(uv);
+		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_UVCoord));
+		glEnableVertexAttribArray(loc);
 	}
 
-    loc = glGetAttribLocation( m_pShader->GetProgram(), "a_Color" );
+    loc = glGetAttribLocation(shader, "a_Color" );
     if( loc != -1 )
     {
         glVertexAttribPointer( loc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Color) );
         glEnableVertexAttribArray( loc );
     }
 
-    // Set up shader.
-    GLuint shader = m_pShader->GetProgram();
-    glUseProgram( shader );
-
     // Set up uniforms.
-    SetUniform2f( shader, "u_ObjectScale", objectScale );
-    SetUniform1f( shader, "u_ObjectAngleRadians", objectAngle / 180.0f * PI );
-    SetUniform2f( shader, "u_ObjectPosition", objectPos );
-    SetUniform2f( shader, "u_CameraTranslation", cameraPos * -1 );
-    SetUniform2f( shader, "u_ProjectionScale", projectionScale );
-
-
-
-    CheckForGLErrors();
+    SetUniform2f( shader, "u_ObjectScale", transform->object_scale );
+    SetUniform1f( shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI );
+    SetUniform2f( shader, "u_ObjectPosition", transform->object_position );
+    SetUniform2f( shader, "u_CameraTranslation", transform->cam_pos * -1 );
+    SetUniform2f( shader, "u_ProjectionScale", transform->proj_scale );
 
     // Draw.
     glDrawArrays( m_PrimitiveType, 0, m_NumVerts );
@@ -98,92 +109,90 @@ void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camera
     CheckForGLErrors();
 }
 
-void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite *texture)
+//Internal draw call for debug lines
+void Mesh::DebugDraw(WorldTransform* transform, GLuint shader)
 {
-	GLuint shader = m_pShader->GetProgram();
-	glUseProgram(shader);
+	GLint loc = glGetAttribLocation(shader, "a_Position");
+	if (loc != -1)
+	{
+		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Pos));
+		glEnableVertexAttribArray(loc);
+	}
 
-	glActiveTexture(GL_TEXTURE0 + texture->TU_index);
-	glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
+	loc = glGetAttribLocation(shader, "a_Color");
+	if (loc != -1)
+	{
+		glVertexAttribPointer(loc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Color));
+		glEnableVertexAttribArray(loc);
+	}
 
-	GLint textureLoc = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
-	if (textureLoc != -1)
-		glUniform1i(textureLoc, texture->TU_index);
+	// Set up uniforms.
+	SetUniform2f(shader, "u_ObjectScale", transform->object_scale);
+	SetUniform1f(shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI);
+	SetUniform2f(shader, "u_ObjectPosition", transform->object_position);
+	SetUniform2f(shader, "u_CameraTranslation", transform->cam_pos * -1);
+	SetUniform2f(shader, "u_ProjectionScale", transform->proj_scale);
 
-	SetUniform2f(shader, "u_UVOffset", vec2(0.0f, 0.0f));
-	SetUniform2f(shader, "u_UVScale", vec2(1.0f, 1.0f));
+	//Debug color uniform
+	loc = glGetUniformLocation(shader, "u_Color");
+	glUniform4f(loc, m_DebugColor->r, m_DebugColor->g, m_DebugColor->b, m_DebugColor->a);
 
-	Draw(objectPos, objectAngle, objectScale, camPos, projScale);
+	glDrawArrays(GL_LINE_LOOP, 0, m_NumVerts);
+
+	CheckForGLErrors();
 }
 
-void Mesh::Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite* texture, AtlasChild *sprite_data)
+void Mesh::Draw(WorldTransform* transform, Sprite *texture)
 {
-	GLuint shader = m_pShader->GetProgram();
-	glUseProgram(shader);
+	GLuint shader = SetActiveShader(m_TextureShader);
+	//Draw call for texture
+	{
+		glActiveTexture(GL_TEXTURE0 + texture->TU_index);
+		glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
 
-	glActiveTexture(GL_TEXTURE0 + texture->TU_index);
-	glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
-	GLint textureLoc = glGetUniformLocation(m_pShader->GetProgram(), "u_Tex");
-	if (textureLoc != -1)
-		glUniform1i(textureLoc, texture->TU_index);
+		GLint textureLoc = glGetUniformLocation(m_TextureShader->GetProgram(), "u_Tex");
+		if (textureLoc != -1)
+			glUniform1i(textureLoc, texture->TU_index);
 
-	SetUniform2f(shader, "u_UVOffset", sprite_data->sprite_UV_Offset);
-	SetUniform2f(shader, "u_UVScale", sprite_data->sprite_UV_Scale);
+		SetUniform2f(shader, "u_UVOffset", vec2(0.0f, 0.0f));
+		SetUniform2f(shader, "u_UVScale", vec2(1.0f, 1.0f));
 
-	Draw(objectPos, objectAngle, objectScale, camPos, projScale);
+		DrawTexture(transform, shader);
+	}
+	//Draw call for debug
+	if (m_DrawDebugLines)
+	{
+		shader = SetActiveShader(m_DebugShader);
+		DebugDraw(transform, shader);
+	}
 }
 
-void Mesh::GenerateTriangle()
+void Mesh::Draw(WorldTransform* transfrom, Sprite* texture, AtlasChild *sprite_data)
 {
-    // ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
-    assert( m_VBO == 0 );
+	GLuint shader = SetActiveShader(m_TextureShader);
+	//Draw call for texture
+	{
+		glActiveTexture(GL_TEXTURE0 + texture->TU_index);
+		glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
 
-    // Vertex info for a diamond.
-    VertexFormat vertexAttributes[] = {
-        VertexFormat( vec2(  0.0f,  1.0f ), vec2(0.5f,1.0f), MyColor( 255, 255, 255, 255 ) ),
-        VertexFormat( vec2( -0.5f, -1.0f ), vec2(0.0f,0.0f), MyColor( 255, 255, 255, 255 ) ),
-        VertexFormat( vec2(  0.5f, -1.0f ), vec2(1.0f,0.0f), MyColor( 255, 255, 255, 255 ) ),
-    };
+		GLint textureLoc = glGetUniformLocation(m_TextureShader->GetProgram(), "u_Tex");
+		if (textureLoc != -1)
+			glUniform1i(textureLoc, texture->TU_index);
 
-    // Gen and fill buffer with our attributes.
-    glGenBuffers( 1, &m_VBO );
-    glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(VertexFormat) * 3, vertexAttributes, GL_STATIC_DRAW );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+		SetUniform2f(shader, "u_UVOffset", sprite_data->sprite_UV_Offset);
+		SetUniform2f(shader, "u_UVScale", sprite_data->sprite_UV_Scale);
 
-    m_PrimitiveType = GL_TRIANGLES;
-    m_NumVerts = 3;
-
-    // Check for errors.
-    CheckForGLErrors();
+		DrawTexture(transfrom, shader);
+	}
+	//Draw call for debug
+	if (m_DrawDebugLines)
+	{
+		shader = SetActiveShader(m_DebugShader);
+		DebugDraw(transfrom, shader);
+	}
 }
 
-void Mesh::GenerateCircle()
-{
-    // ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
-    assert( m_VBO == 0 );
-
-    // Vertex position info for a diamond.
-    VertexFormat vertexAttributes[] = {
-        VertexFormat( vec2(  0.0f,  1.0f ), vec2(0.5f,1.0f), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2( -1.0f,  0.0f ), vec2(0.0f,0.5f), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2(  1.0f,  0.0f ), vec2(1.0f,0.5f), MyColor(   0, 255,   0, 255 ) ),
-        VertexFormat( vec2(  0.0f, -1.0f ),vec2(0.5f,0.0f), MyColor(   0, 255,   0, 255 ) ),
-    };
-
-    // Gen and fill buffer with our attributes.
-    glGenBuffers( 1, &m_VBO );
-    glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(VertexFormat) * 4, vertexAttributes, GL_STATIC_DRAW );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-
-    m_PrimitiveType = GL_TRIANGLE_STRIP;
-    m_NumVerts = 4;
-
-    // Check for errors.
-    CheckForGLErrors();
-}
-
+//Generate a fresh mesh from vertex data
 void Mesh::Generate(const VertexFormat* data, int vertcount, GLuint primitive)
 {
 	m_NumVerts = vertcount;
@@ -192,6 +201,7 @@ void Mesh::Generate(const VertexFormat* data, int vertcount, GLuint primitive)
 	Generate(data);
 }
 
+//Generate a fresh mesh from vertex data
 void Mesh::Generate(const VertexFormat* data)
 {
 	
@@ -209,7 +219,6 @@ void Mesh::Generate(const VertexFormat* data)
 	// Check for errors.
 	CheckForGLErrors();
 }
-
 
 //Generate a mesh from Atlas data.
 void Mesh::GenerateMeshFromAtlas(vec2 sprite_size)

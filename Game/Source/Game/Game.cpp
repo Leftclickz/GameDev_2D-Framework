@@ -4,7 +4,6 @@
 #include "Mesh/Mesh.h"
 #include "GameObjects/GameObject.h"
 #include "GameObjects/Player.h"
-#include "GameObjects/Ball.h"
 #include "GameObjects/PlayerController.h"
 #include "ImageManager/ImageManager.h"
 
@@ -44,9 +43,8 @@ Game::Game(Framework* pFramework)
 	*/
 	//free(str);
 
-    m_pShader = 0;
-    m_pMeshTriangle = 0;
-    m_pMeshCircle = 0;
+    m_TextureShader = 0;
+	m_DebugShader = 0;
 
     m_pPlayer = 0;
     m_pBall = 0;
@@ -61,13 +59,11 @@ Game::~Game()
     delete m_pPlayer;
     delete m_pBall;
 
-	delete m_EmptyMesh;
-    delete m_pMeshTriangle;
-    delete m_pMeshCircle;
 	delete m_MeshTile;
 	delete m_TestLevel;
 
-    delete m_pShader;
+    delete m_TextureShader;
+	delete m_DebugShader;
 
 	ImageManager::Release();
 }
@@ -94,29 +90,24 @@ void Game::LoadContent()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Create our shaders.
-    m_pShader = new ShaderProgram( "Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag" );
+    m_TextureShader = new ShaderProgram( "Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag" );
+	m_DebugShader = new ShaderProgram("Data/Shaders/Color.vert", "Data/Shaders/Color.frag");
 
-    // Create out meshes.
-    m_pMeshTriangle = new Mesh();
-    m_pMeshTriangle->SetShader( m_pShader );
-    m_pMeshTriangle->GenerateTriangle();
+	//Create mesh
+	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
+	m_MeshTile->SetDrawDebugLines(true);
 
-	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_pShader, GL_TRIANGLE_FAN);
-
-    m_pMeshCircle = new Mesh();
-    m_pMeshCircle->SetShader( m_pShader );
-    m_pMeshCircle->GenerateCircle();
-
-	m_EmptyMesh = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_pShader, GL_TRIANGLE_FAN);
-
+	//Initialize image manager and reserve some space
 	ImageManager::Initialize();
 	ImageManager::Reserve(10);
 
+	//Load some images
 	ImageManager::LoadImageAtlas("Bomberman", "SpriteTool");
 	ImageManager::LoadImageData("Default");
 	ImageManager::LoadImageData("Miku");
 	ImageManager::LoadImageData("Pixel_Miku");
 
+	//Create a test animation
 	ImageManager::CreateAnimation("BomberMan_WalkingDown", "Bomberman");
 	AnimatedSprite* animation = ImageManager::UseAnimation("BomberMan_WalkingDown");
 	animation->BuildAnimationArray(2);
@@ -124,14 +115,14 @@ void Game::LoadContent()
 	animation->UseFrame("BM_WalkDown3");
 	animation->SetFramerate(4);
 
-    // Create our GameObjects.
+    // Create our player.
     m_pPlayer = new Player( this, m_MeshTile, "Pixel_Miku");
 
 	//Testing animated sprite atlas
-    m_pBall = new AnimatedObject( this, m_EmptyMesh, "BomberMan_WalkingDown" );
+    m_pBall = new Enemy( this, m_MeshTile, "BomberMan_WalkingDown" );
 
-    // Assign our controllers.
-    m_pPlayerController = new PlayerController();
+    // Assign our controller.
+    m_pPlayerController = new PlayerController(m_pPlayer);
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
 	m_pBall->SetPosition(vec2(50.0f, 50.0f));

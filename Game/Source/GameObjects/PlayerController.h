@@ -2,6 +2,7 @@
 #define __PlayerController_H__
 
 class Event;
+class Player;
 
 class PlayerController
 {
@@ -11,7 +12,10 @@ protected:
     bool m_TurnLeft;
     bool m_TurnRight;
 
+	Player* m_Pawn;
+
 public:
+	PlayerController(Player* pawn) : m_Pawn(pawn) {}
     void OnEvent(Event* pEvent);
 
     bool IsForwardHeld() { return m_Forward; }

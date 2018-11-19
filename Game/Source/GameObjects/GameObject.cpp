@@ -6,10 +6,12 @@
 GameObject::GameObject(GameCore* pGame, Mesh* pMesh)
 : m_pGame( pGame )
 , m_pMesh( pMesh )
-, m_Position( 0, 0 )
-, m_Angle( 0 )
-, m_Radius( 10 )
+, m_Radius(10)
 {
+	m_Transform.object_position = vec2(0.0f, 0.0f);
+	m_Transform.angle = 0.0f;
+	m_Transform.object_scale = vec2(1.0f,1.0f);
+
 }
 
 GameObject::~GameObject()
@@ -18,8 +20,11 @@ GameObject::~GameObject()
 
 void GameObject::Draw(vec2 camPos, vec2 projScale)
 {
-    if( m_pMesh != 0 )
-        m_pMesh->Draw( m_Position, m_Angle, 1, camPos, projScale );
+	m_Transform.cam_pos = camPos;
+	m_Transform.proj_scale = projScale;
+
+	if (m_pMesh->IsDebugging())
+		m_pMesh->SetDebugColor(GetDebugTag());
 }
 
 bool GameObject::IsColliding(GameObject* pOtherGameObject)

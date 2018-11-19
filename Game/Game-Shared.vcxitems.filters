@@ -13,9 +13,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp">
       <Filter>Source\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.cpp">
-      <Filter>Source\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp">
       <Filter>Source\ImageManager</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.cpp">
       <Filter>Source\GameObjects\Level Objects\Environment</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -58,9 +58,6 @@
       <Filter>Source\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h">
-      <Filter>Source\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Ball.h">
       <Filter>Source\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h">
@@ -95,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.h">
       <Filter>Source\GameObjects\Level Objects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

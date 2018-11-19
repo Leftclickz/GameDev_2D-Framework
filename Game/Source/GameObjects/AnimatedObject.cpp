@@ -13,6 +13,7 @@ void AnimatedObject::Update(float deltatime)
 
 void AnimatedObject::Draw(vec2 camPos, vec2 projScale)
 {
+	GameObject::Draw(camPos, projScale);
 	if (m_pMesh != 0)
-		m_pMesh->Draw(m_Position, m_Angle, 1, camPos, projScale, m_Image->sprite_atlas->atlas_image, m_Image->FetchActiveSprite());
+		m_pMesh->Draw(&m_Transform, m_Image->sprite_atlas->atlas_image, m_Image->FetchActiveSprite());
 }

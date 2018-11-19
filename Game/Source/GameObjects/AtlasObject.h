@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	SpriteAtlas *m_Atlas;
-	AtlasChild* m_Image;
+	SpriteAtlas *m_Image;
+	AtlasChild* m_Sprite;
 
 };

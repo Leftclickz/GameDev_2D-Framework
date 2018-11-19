@@ -1,12 +1,14 @@
 #ifndef __Game_H__
 #define __Game_H__
 
-class Ball;
 class Mesh;
-class GameObject;
-class AnimatedObject;
+
+
+class Enemy;
 class Player;
 class PlayerController;
+
+
 class Level;
 
 class Game : public GameCore
@@ -15,17 +17,20 @@ public:
     
 
 protected:
-    ShaderProgram* m_pShader;
-    Mesh* m_pMeshTriangle;
-    Mesh* m_pMeshCircle;
+
+	//Shaders
+    ShaderProgram* m_TextureShader;
+	ShaderProgram* m_DebugShader;
+
+	//Meshes
 	Mesh* m_MeshTile;
-	Mesh* m_EmptyMesh;
 
+	//Game objects
     Player* m_pPlayer;
-    AnimatedObject* m_pBall;
-
+    Enemy* m_pBall;
 	Level* m_TestLevel;
 
+	//Controller
     PlayerController* m_pPlayerController;
 
 public:

@@ -11,5 +11,6 @@ public:
 
 protected:
 
+	virtual std::string GetDebugTag() override { return "Tile"; }
 
 };

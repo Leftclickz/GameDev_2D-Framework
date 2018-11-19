@@ -19,6 +19,8 @@ protected:
     float m_Speed;
     float m_TurningSpeed;
 
+	virtual std::string GetDebugTag() override { return "Player"; }
+
 public:
     Player(GameCore* pGame, Mesh* pMesh, const char* pName);
     virtual ~Player();
@@ -27,6 +29,9 @@ public:
     virtual void Draw(vec2 camPos, vec2 projScale);
 
     void SetPlayerController(PlayerController* controller) { m_pPlayerController = controller; }
+
+	void Move(vec2 direction);
+
     void SetSpeed(float speed) { m_Speed = speed; }
     void SetTurningSpeed(float speed) { m_TurningSpeed = speed; }
 };

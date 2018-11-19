@@ -4,7 +4,6 @@
 #include "Mesh/Mesh.h"
 #include "GameObjects/GameObject.h"
 #include "GameObjects/Player.h"
-#include "GameObjects/Ball.h"
 #include "GameObjects/PlayerController.h"
 
 Player::Player(GameCore* pGame, Mesh* pMesh, const char* pName) 
@@ -65,7 +64,7 @@ void Player::Update(float deltatime)
         }
     }
 	new_pos *= TILE::TILE_LENGTH;
-	m_Position += new_pos;
+	m_Transform.object_position += new_pos;
     //float anglerad = (m_Angle + 90) / 180.0f * PI;
     //vec2 dir( cos(anglerad), sin(anglerad) );
 
@@ -80,4 +79,9 @@ void Player::Draw(vec2 camPos, vec2 projScale)
 {
 	TextureObject::Draw(camPos, projScale);
     //m_pMesh->Draw( m_Position, m_Angle, 1, camPos, projScale );
+}
+
+void Player::Move(vec2 direction)
+{
+	m_Transform.object_position += (direction *TILE::TILE_LENGTH);
 }

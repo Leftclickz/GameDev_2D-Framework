@@ -23,6 +23,9 @@
 //Level environment objects
 #include "GameObjects/Level Objects/Environment/Tile.h"
 
+//Level organic objects
+#include "GameObjects/Level Objects/Enemies/Enemy.h"
+
 
 #if ANDROID
 #include "android_native_app_glue.h"

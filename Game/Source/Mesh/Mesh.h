@@ -15,37 +15,64 @@ struct VertexFormat
     }
 };
 
+struct WorldTransform
+{
+	vec2 object_position;
+	float angle;
+	vec2 object_scale;
+	vec2 cam_pos;
+	vec2 proj_scale;
+};
+
 class Mesh
 {
 protected:
     GLuint m_VBO;
-    ShaderProgram* m_pShader;
+
+    ShaderProgram* m_TextureShader;
+	ShaderProgram* m_DebugShader;
 
     GLenum m_PrimitiveType;
     unsigned int m_NumVerts;
 
+	//debug vars
+	bool m_DrawDebugLines;
+	MyColor* m_DebugColor;
+
 	//Internal mesh generation.
 	void Generate(const VertexFormat* data);
 
+	//Internal shader swapping
+	GLuint SetActiveShader(ShaderProgram* shader);
+
+	//Interal draw call for textures
+	void DrawTexture(WorldTransform* transform, GLuint shader);
+
+	//Internal Draw call for debug lines
+	void DebugDraw(WorldTransform* transform, GLuint shader);
+
 public:
     Mesh();
-	Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, GLuint primitive);
+	Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, ShaderProgram* debug, GLuint primitive);
 
     virtual ~Mesh();
 
-    void SetShader(ShaderProgram* pShader) { m_pShader = pShader; }
+	//Is the mesh in debug mode?
+	bool IsDebugging() { return m_DrawDebugLines; }
 
-    void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale);
-	void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, struct Sprite *texture);
-	void Draw(vec2 objectPos, float objectAngle, vec2 objectScale, vec2 camPos, vec2 projScale, Sprite *texture, struct AtlasChild *sprite_data);
+	//Set the color of the debug lines
+	void SetDebugColor(std::string color);
 
-    void GenerateTriangle();
-    void GenerateCircle();
+	//Set debug mode on or off
+	void SetDrawDebugLines(bool value = true) { m_DrawDebugLines = value; }
 
-
+	//Draw call for game objects
+	void Draw(WorldTransform* transform, struct Sprite *texture);
+	void Draw(WorldTransform* transform, Sprite *texture, struct AtlasChild *sprite_data);
 
 	//Generate a mesh from paramaters. Default primitive is TRIANGLE_FAN
 	void Generate(const VertexFormat* data, int vertcount, GLuint primitive = GL_TRIANGLE_FAN);
+
 	//Generate a mesh from Atlas data.
 	void GenerateMeshFromAtlas(vec2 sprite_size);
 };
