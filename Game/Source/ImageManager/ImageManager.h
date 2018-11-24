@@ -12,7 +12,9 @@ public:
 
 	static void LoadImageData(const char* name);
 	static void LoadImageAtlas(const char* name, const char* convention);
-	static void CreateAnimation(const char* name, const char* atlas);
+	static AnimatedSprite* CreateAnimation(const char* name, const char* atlas);
+
+	static void Update(float deltatime);
 
 	static void Reserve(unsigned int value);
 	static void Release();

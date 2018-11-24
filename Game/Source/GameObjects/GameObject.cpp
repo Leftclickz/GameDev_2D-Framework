@@ -11,6 +11,7 @@ GameObject::GameObject(GameCore* pGame, Mesh* pMesh)
 	m_Transform.object_position = vec2(0.0f, 0.0f);
 	m_Transform.angle = 0.0f;
 	m_Transform.object_scale = vec2(1.0f,1.0f);
+	m_Transform.object_anchor = vec2(0.0f, 0.0f);
 
 }
 

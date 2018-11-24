@@ -35,6 +35,11 @@ AtlasChild* SpriteAtlas::GetSprite(const char* image_name)
 	return new AtlasChild();
 }
 
+AtlasChild* SpriteAtlas::GetSpriteAtIndex(unsigned int index)
+{
+	return &atlas_sprites[index];
+}
+
 AnimatedSprite::AnimatedSprite(const char* name, const char* atlas_name)
 {
 	//the name of our animation sequence
@@ -51,6 +56,8 @@ AnimatedSprite::AnimatedSprite(const char* name, const char* atlas_name)
 	total_animated_sprites = 0;
 
 	animation_sprites = nullptr;
+
+	updates_per_frame = true;
 }
 
 void AnimatedSprite::BuildAnimationArray(int size)
@@ -59,6 +66,20 @@ void AnimatedSprite::BuildAnimationArray(int size)
 		delete[] animation_sprites;
 
 	animation_sprites = new AtlasChild*[size];
+}
+
+void AnimatedSprite::CreateAnimationUsingAtlas(unsigned int indexToStart, unsigned int indexToEnd)
+{
+	assert(indexToEnd - indexToStart <= (unsigned int)(sprite_atlas->atlas_sprite_total + 1));
+	assert(indexToEnd <= (unsigned int)(sprite_atlas->atlas_sprite_total - 1));
+
+	BuildAnimationArray(indexToEnd - indexToStart + 1);
+
+	for (unsigned int i = indexToStart; i <= indexToEnd; i++)
+		UseFrame(sprite_atlas->GetSpriteAtIndex(i));
+
+	SetFramerate((float)(indexToEnd - indexToStart + 1) * 1.5f);
+
 }
 
 AnimatedSprite::~AnimatedSprite()
@@ -75,24 +96,39 @@ void AnimatedSprite::UseFrame(const char* image_name)
 	active_sprite_index = total_animated_sprites - 1;
 }
 
+void AnimatedSprite::UseFrame(AtlasChild* image)
+{
+	animation_sprites[total_animated_sprites] = image;
+	total_animated_sprites++;
+
+	active_sprite_index = total_animated_sprites - 1;
+}
+
 void AnimatedSprite::SetFramerate(float frame_rate)
 {
 	animation_timer->SetDuration(1.0f / frame_rate);
 	animation_timer->Start();
 }
 
+void AnimatedSprite::NextFrame()
+{
+	//If we're at the end. Loop back over.
+	if (active_sprite_index == total_animated_sprites - 1)
+		active_sprite_index = 0;
+	else
+		active_sprite_index++;
+
+	animation_timer->SetElapsed(0.0f);
+}
+
 void AnimatedSprite::Update(float delta)
 {
-	animation_timer->Update(delta);
-
-	if (animation_timer->GetPercentage() == 0.0f)
+	if (updates_per_frame == true)
 	{
-		//If we're at the end. Loop back over.
-		if (active_sprite_index == total_animated_sprites - 1)
-			active_sprite_index = 0;
-		else
-			active_sprite_index++;
-			
+		animation_timer->Update(delta);
+
+		if (animation_timer->GetPercentage() == 0.0f)
+			NextFrame();
 	}
 }
 

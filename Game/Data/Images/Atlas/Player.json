@@ -1,0 +1,47 @@
+{
+	"SpriteTool":	1,
+	"file":	"Player.png",
+	"width":	64,
+	"height":	64,
+	"Files":	[{
+			"filename":	"Player_Idle_1.png",
+			"origw":	24,
+			"origh":	24,
+			"posx":	0,
+			"posy":	40,
+			"trimx":	0,
+			"trimy":	0,
+			"trimw":	24,
+			"trimh":	24
+		}, {
+			"filename":	"Player_Idle_2.png",
+			"origw":	24,
+			"origh":	24,
+			"posx":	0,
+			"posy":	15,
+			"trimx":	0,
+			"trimy":	0,
+			"trimw":	24,
+			"trimh":	24
+		}, {
+			"filename":	"Player_Idle_3.png",
+			"origw":	24,
+			"origh":	24,
+			"posx":	25,
+			"posy":	40,
+			"trimx":	0,
+			"trimy":	0,
+			"trimw":	24,
+			"trimh":	24
+		}, {
+			"filename":	"Player_Idle_4.png",
+			"origw":	24,
+			"origh":	24,
+			"posx":	25,
+			"posy":	15,
+			"trimx":	0,
+			"trimy":	0,
+			"trimw":	24,
+			"trimh":	24
+		}]
+}

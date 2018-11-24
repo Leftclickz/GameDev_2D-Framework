@@ -72,6 +72,11 @@ void Timer::SetDoesLoop(bool aDoesLoop)
 	m_DoesLoop = aDoesLoop;
 }
 
+void Timer::SetElapsed(float aElapsed)
+{
+	m_Elapsed = aElapsed;
+}
+
 float Timer::GetPercentage()
 {
 	return (float)(m_Elapsed / m_Duration);

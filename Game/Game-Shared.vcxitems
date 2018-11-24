@@ -15,11 +15,17 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AI_Patterns.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.h" />
@@ -33,11 +39,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AI_Patterns.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.cpp">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.cpp">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioManager.cpp">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>GamePCH.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TexutreObject.cpp" />
@@ -45,7 +64,9 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\SpriteDataStructures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Level\Level.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.cpp" />

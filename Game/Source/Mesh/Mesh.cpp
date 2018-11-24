@@ -40,6 +40,8 @@ void Mesh::SetDebugColor(std::string tag_name)
 		m_DebugColor = &TILE::RED;
 	else if (tag_name == "Player")
 		m_DebugColor = &TILE::GREEN;
+	else if(tag_name == "Wall")
+		m_DebugColor = &TILE::PINK;
 }
 
 void SetUniform1f(GLuint shader, const char* uniformName, float value)
@@ -98,7 +100,8 @@ void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
     // Set up uniforms.
     SetUniform2f( shader, "u_ObjectScale", transform->object_scale );
     SetUniform1f( shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI );
-    SetUniform2f( shader, "u_ObjectPosition", transform->object_position );
+    SetUniform2f( shader, "u_ObjectPosition", transform->object_position);
+	SetUniform2f( shader, "u_ObjectAnchor", transform->object_anchor);
     SetUniform2f( shader, "u_CameraTranslation", transform->cam_pos * -1 );
     SetUniform2f( shader, "u_ProjectionScale", transform->proj_scale );
 
@@ -130,6 +133,7 @@ void Mesh::DebugDraw(WorldTransform* transform, GLuint shader)
 	SetUniform2f(shader, "u_ObjectScale", transform->object_scale);
 	SetUniform1f(shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI);
 	SetUniform2f(shader, "u_ObjectPosition", transform->object_position);
+	SetUniform2f(shader, "u_ObjectAnchor", transform->object_anchor);
 	SetUniform2f(shader, "u_CameraTranslation", transform->cam_pos * -1);
 	SetUniform2f(shader, "u_ProjectionScale", transform->proj_scale);
 

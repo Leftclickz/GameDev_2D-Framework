@@ -18,6 +18,7 @@ struct VertexFormat
 struct WorldTransform
 {
 	vec2 object_position;
+	vec2 object_anchor;
 	float angle;
 	vec2 object_scale;
 	vec2 cam_pos;

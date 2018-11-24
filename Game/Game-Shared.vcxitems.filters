@@ -46,6 +46,24 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp">
       <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.cpp">
+      <Filter>Source\GameObjects\Level Objects\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AI_Patterns.cpp">
+      <Filter>Source\AI Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.cpp">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioManager.cpp">
+      <Filter>Source\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.cpp">
+      <Filter>Source\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.cpp">
+      <Filter>Source\AudioManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -96,6 +114,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h">
       <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.h">
+      <Filter>Source\GameObjects\Level Objects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AI_Patterns.h">
+      <Filter>Source\AI Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.h">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioManager.h">
+      <Filter>Source\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Source\AudioManager\AudioDataStructures.h">
+      <Filter>Source\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.h">
+      <Filter>Source\AudioManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Data">
@@ -139,6 +175,12 @@
     </Filter>
     <Filter Include="Source\GameObjects\Level">
       <UniqueIdentifier>{0514ed1a-bf2e-4497-874b-f76e90bb0bf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AI Patterns">
+      <UniqueIdentifier>{247a583c-cff8-41ac-b3cb-4c5f36b64214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AudioManager">
+      <UniqueIdentifier>{6d3e2b6f-391b-4310-856e-fbb788c1c2a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

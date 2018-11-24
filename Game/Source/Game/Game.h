@@ -3,7 +3,7 @@
 
 class Mesh;
 
-
+class Slime;
 class Enemy;
 class Player;
 class PlayerController;
@@ -24,10 +24,14 @@ protected:
 
 	//Meshes
 	Mesh* m_MeshTile;
+	Mesh* m_WallMesh;
 
 	//Game objects
     Player* m_pPlayer;
-    Enemy* m_pBall;
+    Slime* m_SlimeTest;
+	Enemy* m_BatTest;
+	Enemy* m_SkeletonIdleTest;
+	Enemy* m_SkeletonAttackingTest;
 	Level* m_TestLevel;
 
 	//Controller
@@ -43,6 +47,10 @@ public:
     virtual void OnEvent(Event* pEvent);
     virtual void Update(float deltatime);
     virtual void Draw();
+
+	virtual Level* GetActiveLevel() { return m_TestLevel; }
+	virtual void NextBeat();
+	virtual Player* GetPlayer() { return m_pPlayer; }
 
     void CheckForCollisions();
 };

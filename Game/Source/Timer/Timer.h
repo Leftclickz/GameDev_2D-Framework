@@ -17,6 +17,8 @@ public:
 	void SetDuration(float aDuration);
 	void SetDoesLoop(bool aDoesLoop);
 
+	void SetElapsed(float aElapsed);
+
 	float GetPercentage();
 
 	double GetElapsed();

@@ -8,10 +8,7 @@ class AnimatedObject : public GameObject
 {
 
 public:
-
 	AnimatedObject(GameCore* pGame, Mesh* pMesh, const char* pName);
-
-	virtual void Update(float deltatime) override;
 
 
 	virtual void Draw(vec2 camPos, vec2 projScale) override;

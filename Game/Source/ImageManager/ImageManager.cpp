@@ -29,11 +29,11 @@ void ImageManager::Release()
 {
 	//Release all owned sprites by the atlas vector
 	for (unsigned int i = 0; i < LoadedAtlas->size(); i++)
-		delete LoadedAtlas->at(0);
+		delete LoadedAtlas->at(i);
 
 	//Release all animation sequences
 	for (unsigned int i = 0; i < LoadedAnimations->size(); i++)
-		delete LoadedAnimations->at(0);
+		delete LoadedAnimations->at(i);
 
 	//Release atlas vector memory
 	delete LoadedAtlas;
@@ -79,9 +79,16 @@ void ImageManager::LoadImageAtlas(const char* name, const char* convention)
 	
 }
 
-void ImageManager::CreateAnimation(const char* name, const char* atlas)
+AnimatedSprite* ImageManager::CreateAnimation(const char* name, const char* atlas)
 {
 	LoadedAnimations->push_back(new AnimatedSprite(name, atlas));
+	return ImageManager::UseAnimation(name);
+}
+
+void ImageManager::Update(float deltatime)
+{
+	for (unsigned int i = 0; i < LoadedAnimations->size(); i++)
+		LoadedAnimations->at(i)->Update(deltatime);
 }
 
 Sprite* ImageManager::UseImage(const char* name)

@@ -4,6 +4,7 @@
 
 //Generic tile size
 static const vec2 TILE_SIZE = vec2(50.0f, 50.0f);
+static const vec2 WALL_SIZE = vec2(50.0f, 100.0f);
 
 //The amount of visible tile indices on the screen at a time
 static const ivec2 SCREEN_TILE_DIMENSIONS = ivec2(20, 12);
@@ -24,13 +25,22 @@ namespace TILE
 	static MyColor WHITE = MyColor(255, 255, 255, 255);
 	static MyColor RED = MyColor(255, 0, 0, 255);
 	static MyColor GREEN = MyColor(0, 255, 0, 255);
-	static MyColor BLUE = MyColor(0, 0, 255, 255);
+	static MyColor BLUE = MyColor(0, 0, 255, 255); 
+	static MyColor PINK = MyColor(255, 20, 147, 255);
 
 	static const VertexFormat TILE_MESH[] = {
 		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
 		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
 		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), WHITE),
 		VertexFormat(vec2(0.0f,50.0f),vec2(0.0f,1.0f), WHITE),
+	};
+
+	static const VertexFormat WALL_MESH[] = 
+	{
+		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
+		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
+		VertexFormat(vec2(50.0f,100.0f),vec2(1.0f,1.0f), WHITE),
+		VertexFormat(vec2(0.0f,100.0f),vec2(0.0f,1.0f), WHITE),
 	};
 
 	static const int TILE_VERT_COUNT = 4;

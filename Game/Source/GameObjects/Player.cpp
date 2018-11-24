@@ -6,18 +6,17 @@
 #include "GameObjects/Player.h"
 #include "GameObjects/PlayerController.h"
 
-Player::Player(GameCore* pGame, Mesh* pMesh, const char* pName) 
-: TextureObject(pGame,pMesh,pName)
+Player::Player(GameCore* pGame, Mesh* pMesh) 
+: AnimatedObject(pGame,pMesh,"Player_Idle")
 , m_pPlayerController( 0 )
 , m_Speed( 0 )
 , m_TurningSpeed( 0 )
 {
-    // Get the world width and height.
-    unsigned int worldWidth = SCREEN_SIZE_X;
-    unsigned int worldHeight = SCREEN_SIZE_Y;
+	m_Moved = false;
+	SetAnchor(vec2(0.0f, TILE_SIZE.y * 0.5f));
 
-    // Set the Player's initial position.
-    //m_Position.Set( worldWidth * PLAYER_START_X_POSITION_PCT, worldHeight * PLAYER_START_Y_POSITION_PCT );
+	//m_BeatTimer = new Timer(((Game*)m_pGame)->GetActiveLevel()->GetBPM(), true);
+	//m_BeatTimer->Start();
 }
     
 Player::~Player()
@@ -26,10 +25,12 @@ Player::~Player()
 
 void Player::Update(float deltatime)
 {
-    //GameObject::Update( deltatime );
 
     SetSpeed( 0 );
     SetTurningSpeed( 0 );
+
+
+	//m_BeatTimer->
 
 	vec2 new_pos = vec2(0.0f,0.0f);
 
@@ -63,25 +64,29 @@ void Player::Update(float deltatime)
 			new_pos.x += 1.0f;
         }
     }
-	new_pos *= TILE::TILE_LENGTH;
-	m_Transform.object_position += new_pos;
-    //float anglerad = (m_Angle + 90) / 180.0f * PI;
-    //vec2 dir( cos(anglerad), sin(anglerad) );
 
-   // m_Position += dir * m_Speed * deltatime;
-    //m_Angle += m_TurningSpeed * deltatime;
+	if (new_pos != vec2(0.0f, 0.0f) && m_Moved == false)
+	{
+		Game* game = (Game*)m_pGame;
 
-    //MyClamp( m_Position.x, 0.0f, (float)SCREEN_SIZE_X );
-    //MyClamp( m_Position.y, 0.0f, (float)SCREEN_SIZE_Y );
+		//check to see if there's a wall
+		if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + new_pos)->IsWalkable())
+			Move(new_pos);
+
+		//Now that we have attempted a move command, set our flag to true and make the game move enemies early.
+		m_Moved = true;
+		game->NextBeat();
+	}
 }
 
 void Player::Draw(vec2 camPos, vec2 projScale)
 {
-	TextureObject::Draw(camPos, projScale);
+	AnimatedObject::Draw(camPos, projScale);
     //m_pMesh->Draw( m_Position, m_Angle, 1, camPos, projScale );
 }
 
 void Player::Move(vec2 direction)
 {
-	m_Transform.object_position += (direction *TILE::TILE_LENGTH);
+	m_Transform.object_position += (direction * TILE::TILE_LENGTH);
+	
 }

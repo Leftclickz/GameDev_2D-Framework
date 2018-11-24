@@ -22,7 +22,6 @@ public:
     virtual ~GameObject();
 
     virtual void OnEvent(Event* pEvent) {}
-    virtual void Update(float deltatime) {}
 	virtual void Draw(vec2 camPos, vec2 projScale);
 
     virtual bool IsColliding(GameObject* pOtherGameObject);
@@ -32,9 +31,19 @@ public:
     vec2 GetPosition() { return m_Transform.object_position; }
     float GetAngle() { return m_Transform.angle; }
     float GetRadius() { return m_Radius; }
+	vec2 GetAnchor() { return m_Transform.object_anchor; }
 
     // Setters.
     void SetPosition(vec2 pos) { m_Transform.object_position = pos; }
+	virtual void SetPosition(int index) {
+
+		float x = (abs(index) % LEVEL_TILE_DIMENSIONS.x) * TILE_SIZE.x;
+		float y = (index / LEVEL_TILE_DIMENSIONS.x) * TILE_SIZE.y;
+		SetPosition(vec2(x, y));
+	}
+
+	void SetAnchor(vec2 anchor) { m_Transform.object_anchor = anchor; }
+
     void SetAngle(float angle) { m_Transform.angle = angle; }
     void SetRadius(float radius) { m_Radius = radius; }
 };
