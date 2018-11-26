@@ -17,7 +17,7 @@ public:
 	void AddVerts(const VertexFormat* verts, int count, WorldTransform world_transform, Sprite* atlas, AtlasChild** child);
 
 	//Add verts using tile properties and tile data.
-	void AddVerts(TileData* data, TileProperties* properties);
+	void AddVerts(TileData* data, TileProperties* properties, bool ReverseDirection = false);
 
 	//Clear the allocation of the verts.
 	void Clear() { m_Verts->clear(); m_Verts->reserve(m_NumVerts); }
@@ -31,7 +31,7 @@ public:
 protected:
 
 	//Internal vertex combination of 1 vector to another.
-	void AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransform* transform);
+	void AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransform* transform, bool ReverseDirection = false);
 
 	Sprite* m_Atlas;
 };

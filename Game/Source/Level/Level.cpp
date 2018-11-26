@@ -9,7 +9,9 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 	m_BeatTimer = nullptr;
 
 	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
+	m_CanvasVariant = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
 	m_Canvas->SetDrawDebugLines();
+	m_CanvasVariant->SetDrawDebugLines();
 
 	m_TileMap = new TileData[level_dimensions];
 
@@ -23,7 +25,12 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 	m_Audio->SetVolume(0.5f);
 	
 	LoadLevelData(name);
-	CreateCanvas();
+
+	CreateCanvas(m_Canvas);
+	SwapFloorSprite();
+	CreateCanvas(m_CanvasVariant);
+
+	m_ActiveCanvas = m_Canvas;
 }
 
 Level::~Level()
@@ -39,13 +46,15 @@ Level::~Level()
 
 	delete m_Audio;
 	delete m_WalkingTile;
+
 	delete m_Canvas;
+	delete m_CanvasVariant;
 }
 
 void Level::Draw()
 {
 	//Draw the tile map
-	m_Canvas->DrawCanvas();
+	m_ActiveCanvas->DrawCanvas();
 
 	//We check tiles for walls and then draw those too.
 	for (int i = level_dimensions - 1; i >= 0; i--)
@@ -77,8 +86,8 @@ TileData* Level::GetTileAtPosition(int tx, int ty)
 
 void Level::AddBeat()
 {
-	//Swap the floor sprite every baet
-	SwapFloorSprite();
+	//Swap the canvas every baet
+	SwapCanvas();
 
 	//If the player didnt move during the beat, too bad. They lose their movement and the enemies get a free move.
 	if (m_pGame->GetPlayer()->HasMovedThisBeat() == false)
@@ -157,16 +166,40 @@ void Level::SwapFloorSprite()
 
 	floor = ImageManager::UseAnimation("Floor_1_Variant_2");
 	floor->NextFrame();
-
-	CreateCanvas();
 }
 
-void Level::CreateCanvas()
+void Level::SwapCanvas()
 {
-	m_Canvas->Clear();
+	if (m_ActiveCanvas == m_Canvas)
+		m_ActiveCanvas = m_CanvasVariant;
+	else
+		m_ActiveCanvas = m_Canvas;
+}
 
+void Level::CreateCanvas(Canvas* canvas)
+{
+	//Clear in case VBO exists.
+	canvas->Clear();
+
+	//Iterate through all tiles and create a singular. We're drawing in a S pattern going upwards.
 	for (unsigned int i = 0; i < level_dimensions; i++)
-		m_Canvas->AddVerts(&m_TileMap[i],m_WalkingTile);
+	{
+		if (i / LEVEL_TILE_DIMENSIONS.x % 2 == 0)
+			//Get our verts. Forward direction drawing.
+			canvas->AddVerts(&m_TileMap[i], m_WalkingTile);
+		else
+		{
+			//Our index is 1 row higher here.
+			int index =  ((i / LEVEL_TILE_DIMENSIONS.x) + 1) * LEVEL_TILE_DIMENSIONS.x;
 
-	m_Canvas->GenerateCanvas();
+			//Our offset will be taking away the 40s from i + 1 (so we stay on the same row).
+			int offset = (i - (i / LEVEL_TILE_DIMENSIONS.x * LEVEL_TILE_DIMENSIONS.x) + 1);
+
+			//Get our verts. Backward direction drawing.
+			canvas->AddVerts(&m_TileMap[index - offset], m_WalkingTile, true);
+		}
+	}
+
+	//Generate a new VBO.
+	canvas->GenerateCanvas();
 }

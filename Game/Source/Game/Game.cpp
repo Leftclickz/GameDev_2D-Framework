@@ -83,8 +83,6 @@ void Game::LoadContent()
 	ImageManager::LoadImageAtlas("Wall_1", "SpriteTool");
 	ImageManager::LoadImageAtlas("Text/DefaultFont_White", "SpriteTool");
 	ImageManager::LoadImageData("Default");
-	ImageManager::LoadImageData("Miku");
-	ImageManager::LoadImageData("Pixel_Miku");
 
 	//create player animation
 	AnimatedSprite* animation = ImageManager::CreateAnimation("Player_Idle", "Player");
@@ -124,7 +122,7 @@ void Game::LoadContent()
 	m_WallMesh->SetDrawDebugLines(true);
 
 	//test Text
-	m_TextMeshTest = new TextMesh("PAUL IS GAY OMEGALUL KAPPA123");
+	m_TextMeshTest = new TextMesh("IF TRAVIS READS THIS HE IS GAY");
 	m_TextMeshTest->SetDrawDebugLines();
 
     // Create our player.

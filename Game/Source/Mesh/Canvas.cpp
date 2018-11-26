@@ -4,7 +4,7 @@ Canvas::Canvas(int object_count, Sprite* image) : Mesh()
 {
 	m_VBO = 0;
 	m_Atlas = image;
-	m_NumVerts = object_count * 6;
+	m_NumVerts = object_count * 4;
 
 	//Reserve room for each Tile (they have 4 verts each)
 	m_Verts->reserve(m_NumVerts);
@@ -55,12 +55,15 @@ void Canvas::AddVerts(const VertexFormat* verts, int count, TexturedTransform* t
 
 }
 
-void Canvas::AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransform* texTransform)
+void Canvas::AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransform* texTransform, bool ReverseDirection /*= false*/)
 {
 
 	//default vertex
 	VertexFormat new_vert(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE);
 	VertexFormat last_vert(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE);
+
+	std::vector<VertexFormat> added_verts;
+	added_verts.reserve(4);
 
 	//Loop through each vert in the file. apply transforms to prepare to add to attributes.
 	for (unsigned int i = 0; i < verts->size(); i++)
@@ -84,18 +87,22 @@ void Canvas::AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransfor
 		new_vert.m_UVCoord += (*texTransform->rendered_image)->sprite_UV_Offset;
 
 		//push back the converted vertex
-		m_Verts->push_back(new_vert);
+		added_verts.push_back(new_vert);
 
-		//Were converting triangle strip into triangles. So we need to add 2 extra verts for every square.
-		//We duplicate the 3rd vert, and save the 2nd to be copied over at the end.
-		if (i == 2)
-			m_Verts->push_back(new_vert);
-		else if (i == 1)
-			last_vert = new_vert;
 	}
 
-	//Add last vert.
-	m_Verts->push_back(last_vert);
+	if (ReverseDirection == false)
+		for (unsigned int i = 0; i < added_verts.size(); i++)
+			m_Verts->push_back(added_verts[i]);
+	else
+	{
+		m_Verts->push_back(added_verts[2]);
+		m_Verts->push_back(added_verts[3]);
+		m_Verts->push_back(added_verts[0]);
+		m_Verts->push_back(added_verts[1]);
+	}
+
+	added_verts.clear();
 }
 
 
@@ -108,7 +115,7 @@ void Canvas::AddVerts(const VertexFormat* verts, int count, WorldTransform world
 	AddVerts(verts, count, &transform);
 }
 
-void Canvas::AddVerts(TileData* data, TileProperties* properties)
+void Canvas::AddVerts(TileData* data, TileProperties* properties, bool ReverseDirection/* = false*/)
 {
 	//Converting the TileData and TileProperties into VertexFormat and TexturedTransform
 	TexturedTransform transform;
@@ -126,7 +133,7 @@ void Canvas::AddVerts(TileData* data, TileProperties* properties)
 	transform.world_transform = &world_transform;
 
 	//Add verts
-	AddVertsByVector(properties->tile_mesh->GetVerts(), &transform);
+	AddVertsByVector(properties->tile_mesh->GetVerts(), &transform, ReverseDirection);
 }
 
 void Canvas::GenerateCanvas()
@@ -159,7 +166,6 @@ void Canvas::DrawCanvas()
 		//Set debug shader active
 		shader = DEBUG_SHADER;
 		glUseProgram(shader);
-
 
 
 		//Draw buffer

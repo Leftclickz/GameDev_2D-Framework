@@ -51,6 +51,9 @@ private:
 #define PLAYER_CAMERA_POSITION CAMERA::GetPlayerCamera()->GetPosition()
 #define PLAYER_CAMERA_PROJECTION CAMERA::GetPlayerCamera()->GetProjection()
 
+#define CANVAS_RENDER_MODE GL_TRIANGLE_STRIP
+#define DEBUG_RENDER_MODE GL_LINE_STRIP
+
 //Generic tile size
 static const vec2 TILE_SIZE = vec2(50.0f, 50.0f);
 static const vec2 WALL_SIZE = vec2(50.0f, 100.0f);
@@ -80,8 +83,8 @@ namespace TILE
 
 	static const VertexFormat TILE_MESH[] = {
 		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
-		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
 		VertexFormat(vec2(0.0f,50.0f),vec2(0.0f,1.0f), WHITE),
+		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
 		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), WHITE),
 	};
 

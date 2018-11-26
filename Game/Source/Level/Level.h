@@ -29,8 +29,9 @@ private:
 
 	void LoadLevelData(const char* name);
 	void SwapFloorSprite();
+	void SwapCanvas();
 
-	void CreateCanvas();
+	void CreateCanvas(Canvas* canvas);
 
 	TileData* m_TileMap;
 
@@ -45,6 +46,8 @@ private:
 	Timer* m_BeatTimer;
 
 	Canvas* m_Canvas;
+	Canvas* m_CanvasVariant;
+	Canvas* m_ActiveCanvas;
 
 	const unsigned int level_dimensions = LEVEL_TILE_DIMENSIONS.x * LEVEL_TILE_DIMENSIONS.y;
 	const float BPM = 60.0f / 130.0f;

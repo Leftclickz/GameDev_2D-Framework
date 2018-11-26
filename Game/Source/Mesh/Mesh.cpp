@@ -129,7 +129,9 @@ void Mesh::DrawBuffer(WorldTransform* transform, GLuint shader)
 	if (shader == TEXTURE_SHADER)
 		primitive = m_PrimitiveType;
 	else if (shader == DEBUG_SHADER)
-		primitive = GL_LINES;
+		primitive = DEBUG_RENDER_MODE;
+	else if (shader == CANVAS_SHADER)
+		primitive = CANVAS_RENDER_MODE;
 	else
 		primitive = GL_TRIANGLES;
 
