@@ -10,6 +10,8 @@ class TextMesh : public Mesh
 public:
 
 	TextMesh();
+	virtual ~TextMesh() {}
+
 	TextMesh(std::string text);
 
 	void SetText(std::string text);

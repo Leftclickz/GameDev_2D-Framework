@@ -119,13 +119,13 @@ void Game::LoadContent()
 	
 	//Create mesh
 	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
-	//m_MeshTile->SetDrawDebugLines(true);
+	m_MeshTile->SetDrawDebugLines(true);
 	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
-	//m_WallMesh->SetDrawDebugLines(true);
+	m_WallMesh->SetDrawDebugLines(true);
 
 	//test Text
-	m_TextMeshTest = new TextMesh("TRAVIS IS GAY OMEGALUL KAPPA123");
-	//m_TextMeshTest->SetDrawDebugLines();
+	m_TextMeshTest = new TextMesh("PAUL IS GAY OMEGALUL KAPPA123");
+	m_TextMeshTest->SetDrawDebugLines();
 
     // Create our player.
     m_pPlayer = new Player( this, m_MeshTile);

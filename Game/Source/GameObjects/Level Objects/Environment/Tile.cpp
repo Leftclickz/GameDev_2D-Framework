@@ -39,3 +39,8 @@ void Tile::SetPosition(int index)
 		m_Wall->SetPosition(index);
 }
 
+TileData::~TileData()
+{
+	if (m_Wall != nullptr)
+		delete m_Wall;
+}

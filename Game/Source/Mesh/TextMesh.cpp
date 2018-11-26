@@ -26,29 +26,7 @@ void TextMesh::SetText(std::string text)
 
 void TextMesh::Draw(WorldTransform* transform)
 {
-	GLuint shader = TEXTURE_SHADER;
-	//Draw call for texture
-	{
-		glUseProgram(shader);
-
-		glActiveTexture(GL_TEXTURE0 + m_TextAtlas->atlas_image->TU_index);
-		glBindTexture(GL_TEXTURE_2D, m_TextAtlas->atlas_image->GL_texture_index);
-
-		GLint textureLoc = glGetUniformLocation(shader, "u_Tex");
-		if (textureLoc != -1)
-			glUniform1i(textureLoc, m_TextAtlas->atlas_image->TU_index);
-
-		SetUniform2f(shader, "u_UVOffset", vec2(0.0f,0.0f));
-		SetUniform2f(shader, "u_UVScale", vec2(1.0f,1.0f));
-
-		DrawTexture(transform);
-	}
-	if (m_DrawDebugLines)
-	{
-		shader = DEBUG_SHADER;
-		glUseProgram(shader);
-		DebugDraw(transform);
-	}
+	Mesh::Draw(transform, m_TextAtlas->atlas_image);
 }
 
 void TextMesh::GenerateTextMesh()
@@ -63,8 +41,7 @@ void TextMesh::GenerateTextMesh()
 	//Convert the length into verts
 	m_NumVerts = length * 6;
 
-	std::vector<VertexFormat> vertices;
-	vertices.reserve(m_NumVerts);
+	m_Verts->reserve(m_NumVerts);
 
 	vec2 position(0.0f, 0.0f);
 
@@ -112,35 +89,30 @@ void TextMesh::GenerateTextMesh()
 			AtlasChild* sprite = m_TextAtlas->GetSprite(character.c_str());
 			sprite_size = sprite->sprite_UV_Scale * m_TextAtlas->atlas_size;
 
-			vertices.push_back(VertexFormat(position, (vec2(0.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
-			vertices.push_back(VertexFormat(position + vec2(0.0f, sprite_size.y), (vec2(0.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
-			vertices.push_back(VertexFormat(position + sprite_size, (vec2(1.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
-			vertices.push_back(VertexFormat(position + sprite_size, (vec2(1.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
-			vertices.push_back(VertexFormat(position + vec2(sprite_size.x, 0.0f), (vec2(1.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
-			vertices.push_back(VertexFormat(position, (vec2(0.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position, (vec2(0.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + vec2(0.0f, sprite_size.y), (vec2(0.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + sprite_size, (vec2(1.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + sprite_size, (vec2(1.0f, 1.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + vec2(sprite_size.x, 0.0f), (vec2(1.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position, (vec2(0.0f, 0.0f) * sprite->sprite_UV_Scale) + sprite->sprite_UV_Offset, TILE::WHITE));
 		}
 		else
 		{
 			sprite_size = vec2(4.0f, 18.0f);
 
-			vertices.push_back(VertexFormat(position, vec2(0.0f, 0.0f), TILE::WHITE));
-			vertices.push_back(VertexFormat(position + vec2(0.0f, sprite_size.y), vec2(0.0f, 0.0f), TILE::WHITE));
-			vertices.push_back(VertexFormat(position + sprite_size, vec2(0.0f, 0.0f), TILE::WHITE));
-			vertices.push_back(VertexFormat(position + sprite_size, vec2(0.0f, 0.0f), TILE::WHITE));
-			vertices.push_back(VertexFormat(position + vec2(sprite_size.x, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE));
-			vertices.push_back(VertexFormat(position, vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position, vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + vec2(0.0f, sprite_size.y), vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + sprite_size, vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + sprite_size, vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position + vec2(sprite_size.x, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE));
+			m_Verts->push_back(VertexFormat(position, vec2(0.0f, 0.0f), TILE::WHITE));
 		}
 
 		position.x += sprite_size.x;
 	}
 
 
-	// Gen and fill buffer with our attributes.
-	glGenBuffers(1, &m_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexFormat) * m_NumVerts,  &vertices.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	Generate();
 	// Check for errors.
 	CheckForGLErrors();
 }

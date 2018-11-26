@@ -9,6 +9,13 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 	m_BeatTimer = nullptr;
 
 	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
+	m_Canvas->SetDrawDebugLines();
+
+	m_TileMap = new TileData[level_dimensions];
+
+	m_WalkingTile = new TileProperties;
+	m_WalkingTile->tile_mesh = mesh;
+	m_WalkingTile->atlas_image = ImageManager::UseImage("Floor_1");
 
 	m_Audio = new Audio(name);
 	m_Audio->SetDoesLoop(true);
@@ -21,8 +28,8 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 
 Level::~Level()
 {
-	for (unsigned int i = 0; i < level_dimensions; i++)
-		delete m_TileMap[i];
+	//for (unsigned int i = 0; i < level_dimensions; i++)
+	//	delete m_TileMap[i];
 
 	delete[] m_TileMap;
 	m_TileMap = nullptr;
@@ -31,42 +38,41 @@ Level::~Level()
 	m_BeatTimer = nullptr;
 
 	delete m_Audio;
-
+	delete m_WalkingTile;
 	delete m_Canvas;
 }
 
 void Level::Draw()
 {
-
 	//Draw the tile map
 	m_Canvas->DrawCanvas();
 
 	//We check tiles for walls and then draw those too.
 	for (int i = level_dimensions - 1; i >= 0; i--)
-		m_TileMap[i]->Draw();
+		if (m_TileMap[i].m_Wall != nullptr)
+			m_TileMap[i].m_Wall->Draw();
 }
 
 void Level::Update(float deltatime)
 {
-
 	m_BeatTimer->Update(deltatime);
 	if (m_BeatTimer->GetPercentage() == 0.0f)
 		AddBeat();
 }
 
-Tile* Level::GetTileAtPosition(vec2 position)
+TileData* Level::GetTileAtPosition(vec2 position)
 {
 	int x = (int)(position.x / TILE_SIZE.x);
 	int y = (int)(position.y / TILE_SIZE.y);
 
 	int index = x + (LEVEL_TILE_DIMENSIONS.x * y);
 
-	return m_TileMap[index];
+	return &m_TileMap[index];
 }
 
-Tile* Level::GetTileAtPosition(int tx, int ty)
+TileData* Level::GetTileAtPosition(int tx, int ty)
 {
-	return m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
+	return &m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
 }
 
 void Level::AddBeat()
@@ -85,13 +91,18 @@ void Level::AddBeat()
 void Level::LoadLevelData(const char* name)
 {
 	//for now we're just drawing a map of nothing but floor. We'd want to load a file here
-		m_TileMap = new Tile*[level_dimensions];
+		//m_TileMap = new Tile*[level_dimensions];
 
 		//Using a default beat timer for now at 188bpm.
 		m_BeatTimer = new Timer(BPM, true);
 		m_BeatTimer->Start();
 
 		//std::string animation_name = std::string(name) + "_Variant_";
+
+		AtlasChild** variant_one = ImageManager::UseAnimation("Floor_1_Variant_1")->FetchActiveSprite();
+		AtlasChild** variant_two = ImageManager::UseAnimation("Floor_1_Variant_2")->FetchActiveSprite();
+
+		Sprite* atlas = ImageManager::UseImage("Floor_1");
 
 	for (unsigned int i = 0; i < level_dimensions; i++)
 	{
@@ -101,12 +112,19 @@ void Level::LoadLevelData(const char* name)
 		float x = (float)d * TILE_SIZE.x;
 		float y = (float)f * TILE_SIZE.y;
 
+		//if (d % 2 == 0 && f % 2 == 0)
+		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+		//else if (d % 2 == 1 && f % 2 == 1)
+		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+		//else
+		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
+
 		if (d % 2 == 0 && f % 2 == 0)
-			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+			m_TileMap[i] = TileData(vec2(x, y), variant_one);
 		else if (d % 2 == 1 && f % 2 == 1)
-			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+			m_TileMap[i] = TileData(vec2(x, y), variant_one);
 		else
-			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
+			m_TileMap[i] = TileData(vec2(x, y), variant_two);
 
 		//std::string variant_name = animation_name;
 
@@ -122,10 +140,13 @@ void Level::LoadLevelData(const char* name)
 		if (d == 3)
 		{
 			if (f != 2)
-				m_TileMap[i]->AddWall(new Wall(m_pGame, m_WallMesh,"Wall_1"));
+			{
+				m_TileMap[i].m_Wall = new Wall(m_pGame, m_WallMesh, "Wall_1");
+				m_TileMap[i].m_Wall->SetPosition(i);
+			}
 		}
-
-		m_TileMap[i]->SetPosition(i);
+		
+		//m_TileMap[i]->SetPosition(i);
 	}
 }
 
@@ -145,7 +166,7 @@ void Level::CreateCanvas()
 	m_Canvas->Clear();
 
 	for (unsigned int i = 0; i < level_dimensions; i++)
-		m_Canvas->AddVerts(TILE::TILE_MESH, 4, m_TileMap[i]->GetTexturedTransform());
+		m_Canvas->AddVerts(&m_TileMap[i],m_WalkingTile);
 
 	m_Canvas->GenerateCanvas();
 }

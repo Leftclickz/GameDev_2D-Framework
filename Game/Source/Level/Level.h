@@ -5,6 +5,8 @@ class Mesh;
 class Tile;
 class Timer;
 class Audio;
+struct TileData;
+struct TileProperties;
 
 class Level
 {
@@ -17,8 +19,8 @@ public:
 	void Draw();
 	void Update(float deltatime);
 
-	Tile* GetTileAtPosition(vec2 position);
-	Tile* GetTileAtPosition(int tx, int ty);
+	TileData* GetTileAtPosition(vec2 position);
+	TileData* GetTileAtPosition(int tx, int ty);
 
 	void AddBeat();
 	float GetBPM() { return BPM; }
@@ -30,7 +32,11 @@ private:
 
 	void CreateCanvas();
 
-	Tile** m_TileMap;
+	TileData* m_TileMap;
+
+
+	TileProperties* m_WalkingTile;
+
 	Game* m_pGame;
 	Mesh* m_TileMesh;
 	Mesh* m_WallMesh;

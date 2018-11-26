@@ -20,6 +20,9 @@ struct VertexFormat
 
 struct WorldTransform
 {
+	WorldTransform() : object_position(vec2(0.0f, 0.0f)), object_anchor(vec2(0.0f, 0.0f)), angle(0.0f), object_scale(vec2(1.0f, 1.0f)) {}
+	WorldTransform(vec2 position) : object_position(position), object_anchor(vec2(0.0f, 0.0f)), angle(0.0f), object_scale(vec2(1.0f, 1.0f)) {}
+
 	vec2 object_position;
 	vec2 object_anchor;
 	float angle;
@@ -28,6 +31,9 @@ struct WorldTransform
 
 struct TexturedTransform
 {
+	TexturedTransform() {}
+	TexturedTransform(WorldTransform* trans, Sprite* atlas, AtlasChild** image) : world_transform(trans), atlas_image(atlas), rendered_image(image) {}
+
 	WorldTransform* world_transform;
 	Sprite* atlas_image;
 	AtlasChild** rendered_image;
@@ -41,20 +47,20 @@ protected:
     GLuint m_VBO;
 
     GLenum m_PrimitiveType;
+
+	//Vertices
     unsigned int m_NumVerts;
+	std::vector<VertexFormat>* m_Verts;
 
 	//debug vars
 	bool m_DrawDebugLines;
 	MyColor* m_DebugColor;
 
 	//Internal mesh generation.
-	void Generate(const VertexFormat* data);
+	void Generate();
 
 	//Interal draw call for textures
-	void DrawTexture(WorldTransform* transform);
-
-	//Internal Draw call for debug lines
-	void DebugDraw(WorldTransform* transform);
+	virtual void DrawBuffer(WorldTransform* transform, GLuint shader);
 
 public:
     Mesh();
@@ -71,9 +77,10 @@ public:
 	//Set debug mode on or off
 	void SetDrawDebugLines(bool value = true) { m_DrawDebugLines = value; }
 
-	//Draw call for game objects
-	void Draw(WorldTransform* transform, Sprite *texture);
-	void Draw(WorldTransform* transform, Sprite *texture,  AtlasChild *sprite_data);
+	//Draw call for game objects with world transforms
+	void Draw(WorldTransform* transform, Sprite *texture,  AtlasChild *sprite_data = nullptr);
+
+	//Overloaded call for textures with a full transform
 	void Draw(TexturedTransform* transform);
 
 	//Generate a mesh from paramaters. Default primitive is TRIANGLE_FAN
@@ -81,6 +88,12 @@ public:
 
 	//Generate a mesh from Atlas data.
 	void GenerateMeshFromAtlas(vec2 sprite_size);
+
+	//Fetch vertex count
+	int GetVertCount() { return m_NumVerts; }
+
+	//Fetch vertex vector
+	std::vector<VertexFormat>* GetVerts() { return m_Verts; }
 };
 
 #endif //__Mesh_H__
