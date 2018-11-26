@@ -64,6 +64,18 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.cpp">
       <Filter>Source\AudioManager</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AStarPathFinding.cpp">
+      <Filter>Source\AI Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.cpp">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.cpp">
+      <Filter>Source\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.cpp">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -131,6 +143,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.h">
       <Filter>Source\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AI Patterns\AStarPathFinding.h">
+      <Filter>Source\AI Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.h">
+      <Filter>Source\GameObjects\Level Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.h">
+      <Filter>Source\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.h">
+      <Filter>Source\GameObjects\Base Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

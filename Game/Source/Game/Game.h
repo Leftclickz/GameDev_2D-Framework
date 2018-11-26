@@ -5,9 +5,11 @@ class Mesh;
 
 class Slime;
 class Enemy;
+class Skeleton;
 class Player;
 class PlayerController;
-
+class AI_Patterns;
+class TextMesh;
 
 class Level;
 
@@ -25,17 +27,21 @@ protected:
 	//Meshes
 	Mesh* m_MeshTile;
 	Mesh* m_WallMesh;
+	TextMesh* m_TextMeshTest;
 
 	//Game objects
     Player* m_pPlayer;
     Slime* m_SlimeTest;
 	Enemy* m_BatTest;
-	Enemy* m_SkeletonIdleTest;
-	Enemy* m_SkeletonAttackingTest;
+	Skeleton* m_SkeletonTest;
 	Level* m_TestLevel;
+	TextObject* m_TestText;
 
 	//Controller
     PlayerController* m_pPlayerController;
+
+	//AI Pathfinding
+	AI_Patterns* m_AI;
 
 public:
     Game(Framework* pFramework);

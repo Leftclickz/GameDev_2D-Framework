@@ -13,6 +13,10 @@
 #include "ImageManager/ImageManager.h"
 #include "ImageManager/SpriteDataStructures.h"
 
+//Meshes
+#include "Mesh/Mesh.h"
+#include "Mesh/TextMesh.h"
+
 //Sounds
 #include "AudioManager/AudioDataStructures.h"
 #include "AudioManager/AudioEngine.h"
@@ -21,11 +25,14 @@
 //Tools
 #include "Timer/Timer.h"
 #include "AI Patterns/AI_Patterns.h"
+#include "AI Patterns/AStarPathFinding.h"
+#include "GameObjects/PlayerController.h"
 
 //Base class objects
 #include "GameObjects/TexutreObject.h"
 #include "GameObjects/AtlasObject.h"
 #include "GameObjects/AnimatedObject.h"
+#include "GameObjects/TextObject.h"
 
 //Level objects
 #include "Level/Level.h"
@@ -37,6 +44,8 @@
 //Level organic objects
 #include "GameObjects/Level Objects/Enemies/Enemy.h"
 #include "GameObjects/Level Objects/Enemies/Slime.h"
+#include "GameObjects/Level Objects/Enemies/Skeleton.h"
+#include "GameObjects/Player.h"
 
 #if ANDROID
 #include "android_native_app_glue.h"

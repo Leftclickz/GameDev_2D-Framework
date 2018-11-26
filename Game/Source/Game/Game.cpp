@@ -1,13 +1,6 @@
 #include "GamePCH.h"
 
 #include "Game/Game.h"
-#include "Mesh/Mesh.h"
-#include "GameObjects/GameObject.h"
-#include "GameObjects/Player.h"
-#include "GameObjects/PlayerController.h"
-#include "ImageManager/ImageManager.h"
-#include "AudioManager/AudioManager.h"
-
 
 Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
@@ -20,6 +13,7 @@ Game::Game(Framework* pFramework)
 	m_BatTest = 0;
 
     m_pPlayerController = 0;
+	m_AI = 0;
 }
 
 Game::~Game()
@@ -29,16 +23,19 @@ Game::~Game()
     delete m_pPlayer;
     delete m_SlimeTest;
 	delete m_BatTest;
-	delete m_SkeletonIdleTest;
-	delete m_SkeletonAttackingTest;
+	delete m_SkeletonTest;
+	delete m_TestText;
 
 	delete m_MeshTile;
 	delete m_WallMesh;
+	delete m_TextMeshTest;
 
 	delete m_TestLevel;
 
     delete m_TextureShader;
 	delete m_DebugShader;
+
+	delete m_AI;
 
 	ImageManager::Release();
 	AudioManager::Release();
@@ -69,12 +66,6 @@ void Game::LoadContent()
     m_TextureShader = new ShaderProgram( "Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag" );
 	m_DebugShader = new ShaderProgram("Data/Shaders/Color.vert", "Data/Shaders/Color.frag");
 
-	//Create mesh
-	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
-	//m_MeshTile->SetDrawDebugLines(true);
-	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
-	//m_WallMesh->SetDrawDebugLines(true);
-	
 	//Initialize sounds
 	AudioManager::Initialize();
 	AudioManager::Reserve();
@@ -87,23 +78,19 @@ void Game::LoadContent()
 	ImageManager::Reserve(10);
 
 	//Load some images
-	ImageManager::LoadImageAtlas("Bomberman", "SpriteTool");
 	ImageManager::LoadImageAtlas("Player", "SpriteTool");
 	ImageManager::LoadImageAtlas("Bat", "SpriteTool");
 	ImageManager::LoadImageAtlas("SlimeGreen", "SpriteTool");
 	ImageManager::LoadImageAtlas("SkeletonWhite", "SpriteTool");
 	ImageManager::LoadImageAtlas("Floor_1", "SpriteTool");
 	ImageManager::LoadImageAtlas("Wall_1", "SpriteTool");
+	ImageManager::LoadImageAtlas("Text/DefaultFont_White", "SpriteTool");
 	ImageManager::LoadImageData("Default");
 	ImageManager::LoadImageData("Miku");
 	ImageManager::LoadImageData("Pixel_Miku");
 
-	//Create a test animation
-	AnimatedSprite* animation = ImageManager::CreateAnimation("BomberMan_WalkingDown", "Bomberman");
-	animation->CreateAnimationUsingAtlas(0, 1);
-
 	//create player animation
-	animation = ImageManager::CreateAnimation("Player_Idle", "Player");
+	AnimatedSprite* animation = ImageManager::CreateAnimation("Player_Idle", "Player");
 	animation->CreateAnimationUsingAtlas(0, 3);
 
 	//create player animation
@@ -132,19 +119,33 @@ void Game::LoadContent()
 	animation->CreateAnimationUsingAtlas(2, 3);
 	animation->SetAnimatedWithUpdates(false);
 	animation->NextFrame();
+	
+	//Create mesh
+	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
+	m_MeshTile->SetDrawDebugLines(true);
+	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
+	m_WallMesh->SetDrawDebugLines(true);
 
+	//test Text
+	m_TextMeshTest = new TextMesh("TRAVIS IS GAY OMEGALUL KAPPA123", m_TextureShader, m_DebugShader);
+	m_TextMeshTest->SetDrawDebugLines();
 
 	//Create our level
 	m_TestLevel = new Level(this, m_MeshTile, m_WallMesh, "Floor_1");
+
+	//Create AI
+	m_AI = new AI_Patterns(this);
+	m_AI->SetLevel(m_TestLevel);
 
     // Create our player.
     m_pPlayer = new Player( this, m_MeshTile);
 
 	//Testing animated sprite atlas
     m_SlimeTest = new Slime( this, m_MeshTile);
-	m_BatTest = new Enemy(this, m_MeshTile, "BomberMan_WalkingDown");
-	m_SkeletonAttackingTest = new Enemy(this, m_MeshTile, "SkeletonWhite_Idle");
-	m_SkeletonIdleTest = new Enemy(this, m_MeshTile, "SkeletonWhite_Attacking");
+	m_BatTest = new Enemy(this, m_MeshTile, "Bat_Idle");
+	m_SkeletonTest = new Skeleton(this, m_MeshTile);
+
+	m_TestText = new TextObject(this, m_TextMeshTest);
 
     // Assign our controller.
     m_pPlayerController = new PlayerController(m_pPlayer);
@@ -152,10 +153,10 @@ void Game::LoadContent()
 
 	m_SlimeTest->SetPosition(vec2(200.0f, 50.0f));
 	m_BatTest->SetPosition(vec2(100.0f, 50.0f));
-	m_SkeletonAttackingTest->SetPosition(vec2(50.0f, 100.0f));
-	m_SkeletonIdleTest->SetPosition(vec2(100.0f, 100.0f));
+	m_SkeletonTest->SetPosition(vec2(300, 100.0f));
 
-
+	m_TestText->SetPosition(2);
+	m_pPlayer->SetPosition(46);
 
     CheckForGLErrors();
 }
@@ -196,9 +197,9 @@ void Game::Draw()
 	m_pPlayer->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
 	m_SlimeTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
 	m_BatTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
-	m_SkeletonIdleTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
-	m_SkeletonAttackingTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
+	m_SkeletonTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
 
+	m_TestText->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
 
 	//m_TestLevel->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
 	//m_pPlayer->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
@@ -213,7 +214,7 @@ void Game::Draw()
 void Game::NextBeat()
 {
 	m_SlimeTest->DoNextMove();
-	
+	m_SkeletonTest->DoNextMove();
 }
 
 void Game::CheckForCollisions()

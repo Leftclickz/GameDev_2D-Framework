@@ -87,7 +87,6 @@ public:
 	//Sprite atlas this animation is using
 	SpriteAtlas* sprite_atlas;
 
-
 private:
 
 	//Animation timer

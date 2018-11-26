@@ -15,6 +15,8 @@ bool Enemy::AttemptMovement(int index)
 {
 	Game* game = (Game*)m_pGame;
 
+	index -= GetPositionByIndex();
+
 	int x = index % LEVEL_TILE_DIMENSIONS.x;
 	int y = index / LEVEL_TILE_DIMENSIONS.x;
 

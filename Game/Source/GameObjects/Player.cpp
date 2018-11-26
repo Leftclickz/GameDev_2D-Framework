@@ -82,7 +82,6 @@ void Player::Update(float deltatime)
 void Player::Draw(vec2 camPos, vec2 projScale)
 {
 	AnimatedObject::Draw(camPos, projScale);
-    //m_pMesh->Draw( m_Position, m_Angle, 1, camPos, projScale );
 }
 
 void Player::Move(vec2 direction)

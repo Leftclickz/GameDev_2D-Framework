@@ -7,6 +7,7 @@ Mesh::Mesh()
 {
     m_VBO = 0;
     m_TextureShader = 0;
+	m_DebugShader = 0;
 
     m_PrimitiveType = -1;
     m_NumVerts = 0;
@@ -42,6 +43,8 @@ void Mesh::SetDebugColor(std::string tag_name)
 		m_DebugColor = &TILE::GREEN;
 	else if(tag_name == "Wall")
 		m_DebugColor = &TILE::PINK;
+	else if (tag_name == "Text")
+		m_DebugColor = &TILE::CYAN;
 }
 
 void SetUniform1f(GLuint shader, const char* uniformName, float value)
@@ -69,6 +72,7 @@ GLuint Mesh::SetActiveShader(ShaderProgram* shader)
 	glUseProgram(shadeObj);
 	return shadeObj;
 }
+
 
 //Internal draw call for textures.
 void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
@@ -98,6 +102,7 @@ void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
     }
 
     // Set up uniforms.
+
     SetUniform2f( shader, "u_ObjectScale", transform->object_scale );
     SetUniform1f( shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI );
     SetUniform2f( shader, "u_ObjectPosition", transform->object_position);
@@ -171,7 +176,7 @@ void Mesh::Draw(WorldTransform* transform, Sprite *texture)
 	}
 }
 
-void Mesh::Draw(WorldTransform* transfrom, Sprite* texture, AtlasChild *sprite_data)
+void Mesh::Draw(WorldTransform* transform, Sprite* texture, AtlasChild *sprite_data)
 {
 	GLuint shader = SetActiveShader(m_TextureShader);
 	//Draw call for texture
@@ -186,13 +191,13 @@ void Mesh::Draw(WorldTransform* transfrom, Sprite* texture, AtlasChild *sprite_d
 		SetUniform2f(shader, "u_UVOffset", sprite_data->sprite_UV_Offset);
 		SetUniform2f(shader, "u_UVScale", sprite_data->sprite_UV_Scale);
 
-		DrawTexture(transfrom, shader);
+		DrawTexture(transform, shader);
 	}
 	//Draw call for debug
 	if (m_DrawDebugLines)
 	{
 		shader = SetActiveShader(m_DebugShader);
-		DebugDraw(transfrom, shader);
+		DebugDraw(transform, shader);
 	}
 }
 

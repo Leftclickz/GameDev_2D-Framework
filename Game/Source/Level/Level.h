@@ -18,6 +18,7 @@ public:
 	void Update(float deltatime);
 
 	Tile* GetTileAtPosition(vec2 position);
+	Tile* GetTileAtPosition(int tx, int ty);
 
 	void AddBeat();
 	float GetBPM() { return BPM; }

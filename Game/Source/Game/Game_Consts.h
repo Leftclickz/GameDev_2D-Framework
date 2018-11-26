@@ -27,6 +27,7 @@ namespace TILE
 	static MyColor GREEN = MyColor(0, 255, 0, 255);
 	static MyColor BLUE = MyColor(0, 0, 255, 255); 
 	static MyColor PINK = MyColor(255, 20, 147, 255);
+	static MyColor CYAN = MyColor(0, 255, 255, 255);
 
 	static const VertexFormat TILE_MESH[] = {
 		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),

@@ -1,6 +1,5 @@
 #include "GamePCH.h"
 #include "../Game/Game.h"
-#include "../GameObjects/Player.h"
 
 Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 {
@@ -10,7 +9,9 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 	m_BeatTimer = nullptr;
 
 	m_Audio = new Audio(name);
+	m_Audio->SetDoesLoop(true);
 	m_Audio->Play();
+	m_Audio->SetVolume(0.5f);
 	
 	LoadLevelData(name);
 }
@@ -48,6 +49,11 @@ Tile* Level::GetTileAtPosition(vec2 position)
 	int index = x + (LEVEL_TILE_DIMENSIONS.x * y);
 
 	return &m_TileMap[index];
+}
+
+Tile* Level::GetTileAtPosition(int tx, int ty)
+{
+	return &m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
 }
 
 void Level::AddBeat()

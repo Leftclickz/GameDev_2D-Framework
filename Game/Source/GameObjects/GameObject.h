@@ -29,6 +29,7 @@ public:
 
     // Getters.
     vec2 GetPosition() { return m_Transform.object_position; }
+	int GetPositionByIndex() { return (int)((m_Transform.object_position.y / TILE_SIZE.y) * LEVEL_TILE_DIMENSIONS.x + (m_Transform.object_position.x / TILE_SIZE.x)); }
     float GetAngle() { return m_Transform.angle; }
     float GetRadius() { return m_Radius; }
 	vec2 GetAnchor() { return m_Transform.object_anchor; }

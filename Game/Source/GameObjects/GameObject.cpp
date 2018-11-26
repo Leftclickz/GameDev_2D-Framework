@@ -1,8 +1,5 @@
 #include "GamePCH.h"
 
-#include "Mesh/Mesh.h"
-#include "GameObjects/GameObject.h"
-
 GameObject::GameObject(GameCore* pGame, Mesh* pMesh)
 : m_pGame( pGame )
 , m_pMesh( pMesh )

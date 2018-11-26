@@ -25,6 +25,8 @@ struct WorldTransform
 	vec2 proj_scale;
 };
 
+void SetUniform2f(GLuint shader, const char* uniformName, vec2 value);
+
 class Mesh
 {
 protected:
