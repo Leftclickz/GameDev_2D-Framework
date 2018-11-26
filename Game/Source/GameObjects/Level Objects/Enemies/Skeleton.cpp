@@ -18,11 +18,13 @@ void Skeleton::DoNextMove()
 		{
 			m_Pathfinding = AI_Patterns::CardinalAStarPathFinding;
 			m_Image = ImageManager::UseAnimation("SkeletonWhite_Attacking");
+			SetTextureTransform();
 		}
 		else
 		{
 			m_Pathfinding = AI_Patterns::IdleMovement;
 			m_Image = ImageManager::UseAnimation("SkeletonWhite_Idle");
+			SetTextureTransform();
 		}
 	}
 }

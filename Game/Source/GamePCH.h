@@ -4,6 +4,7 @@
 #include "../../Libraries/Framework/Source/FrameworkPCH.h"
 
 #include "Game/Game_Consts.h"
+#include "Game/Game.h"
 
 //audio library
 #include <xaudio2.h>
@@ -16,6 +17,7 @@
 //Meshes
 #include "Mesh/Mesh.h"
 #include "Mesh/TextMesh.h"
+#include "Mesh/Canvas.h"
 
 //Sounds
 #include "AudioManager/AudioDataStructures.h"
@@ -33,6 +35,7 @@
 #include "GameObjects/AtlasObject.h"
 #include "GameObjects/AnimatedObject.h"
 #include "GameObjects/TextObject.h"
+#include "GameObjects/Camera.h"
 
 //Level objects
 #include "Level/Level.h"

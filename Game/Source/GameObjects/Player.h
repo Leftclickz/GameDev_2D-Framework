@@ -30,7 +30,7 @@ public:
     virtual ~Player();
 
     virtual void Update(float deltatime);
-    virtual void Draw(vec2 camPos, vec2 projScale);
+    virtual void Draw();
 
     void SetPlayerController(PlayerController* controller) { m_pPlayerController = controller; }
 

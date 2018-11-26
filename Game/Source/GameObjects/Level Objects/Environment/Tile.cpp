@@ -18,12 +18,12 @@ Tile::~Tile()
 	}
 }
 
-void Tile::Draw(vec2 camPos, vec2 projScale)
+void Tile::Draw()
 {
-	AnimatedObject::Draw(camPos, projScale);
+	//AnimatedObject::Draw();
 	
 	if (m_Wall != nullptr)
-		m_Wall->Draw(camPos, projScale);
+		m_Wall->Draw();
 }
 
 void Tile::AddWall(Wall* aWall)

@@ -16,11 +16,8 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::Draw(vec2 camPos, vec2 projScale)
+void GameObject::Draw()
 {
-	m_Transform.cam_pos = camPos;
-	m_Transform.proj_scale = projScale;
-
 	if (m_pMesh->IsDebugging())
 		m_pMesh->SetDebugColor(GetDebugTag());
 }

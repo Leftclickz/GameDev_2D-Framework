@@ -1,7 +1,7 @@
-#version 120
+#version 140
 
-attribute vec2 a_Position;
-attribute vec4 a_Color;
+in vec2 a_Position;
+in vec4 a_Color;
 
 //object uniforms
 uniform vec2 u_ObjectScale;
@@ -14,7 +14,7 @@ uniform vec2 u_ObjectAnchor;
 uniform vec2 u_CameraTranslation;
 uniform vec2 u_ProjectionScale;
 
-varying vec4 v_Color;
+out vec4 v_Color;
 
 void main()
 {

@@ -2,15 +2,14 @@
 #define __Game_H__
 
 class Mesh;
-
 class Slime;
 class Enemy;
 class Skeleton;
 class Player;
 class PlayerController;
 class AI_Patterns;
+class TextObject;
 class TextMesh;
-
 class Level;
 
 class Game : public GameCore
@@ -23,6 +22,7 @@ protected:
 	//Shaders
     ShaderProgram* m_TextureShader;
 	ShaderProgram* m_DebugShader;
+	ShaderProgram* m_CanvasShader;
 
 	//Meshes
 	Mesh* m_MeshTile;

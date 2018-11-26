@@ -7,9 +7,9 @@ TextureObject::TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName) : 
 	assert(m_Image->GL_texture_index != -1);
 }
 
-void TextureObject::Draw(vec2 camPos, vec2 projScale)
+void TextureObject::Draw()
 {
-	GameObject::Draw(camPos, projScale);
+	GameObject::Draw();
 	if (m_pMesh != 0)
 		m_pMesh->Draw(&m_Transform, m_Image);
 }

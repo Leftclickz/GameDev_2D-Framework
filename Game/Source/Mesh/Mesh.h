@@ -1,6 +1,9 @@
 #ifndef __Mesh_H__
 #define __Mesh_H__
 
+struct Sprite;
+struct AtlasChild;
+
 struct VertexFormat
 {
     vec2 m_Pos;
@@ -21,8 +24,13 @@ struct WorldTransform
 	vec2 object_anchor;
 	float angle;
 	vec2 object_scale;
-	vec2 cam_pos;
-	vec2 proj_scale;
+};
+
+struct TexturedTransform
+{
+	WorldTransform* world_transform;
+	Sprite* atlas_image;
+	AtlasChild** rendered_image;
 };
 
 void SetUniform2f(GLuint shader, const char* uniformName, vec2 value);
@@ -31,9 +39,6 @@ class Mesh
 {
 protected:
     GLuint m_VBO;
-
-    ShaderProgram* m_TextureShader;
-	ShaderProgram* m_DebugShader;
 
     GLenum m_PrimitiveType;
     unsigned int m_NumVerts;
@@ -45,18 +50,15 @@ protected:
 	//Internal mesh generation.
 	void Generate(const VertexFormat* data);
 
-	//Internal shader swapping
-	GLuint SetActiveShader(ShaderProgram* shader);
-
 	//Interal draw call for textures
-	void DrawTexture(WorldTransform* transform, GLuint shader);
+	void DrawTexture(WorldTransform* transform);
 
 	//Internal Draw call for debug lines
-	void DebugDraw(WorldTransform* transform, GLuint shader);
+	void DebugDraw(WorldTransform* transform);
 
 public:
     Mesh();
-	Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, ShaderProgram* debug, GLuint primitive);
+	Mesh(const VertexFormat* mesh_data, int vert_count, GLuint primitive);
 
     virtual ~Mesh();
 
@@ -70,8 +72,9 @@ public:
 	void SetDrawDebugLines(bool value = true) { m_DrawDebugLines = value; }
 
 	//Draw call for game objects
-	void Draw(WorldTransform* transform, struct Sprite *texture);
-	void Draw(WorldTransform* transform, Sprite *texture, struct AtlasChild *sprite_data);
+	void Draw(WorldTransform* transform, Sprite *texture);
+	void Draw(WorldTransform* transform, Sprite *texture,  AtlasChild *sprite_data);
+	void Draw(TexturedTransform* transform);
 
 	//Generate a mesh from paramaters. Default primitive is TRIANGLE_FAN
 	void Generate(const VertexFormat* data, int vertcount, GLuint primitive = GL_TRIANGLE_FAN);

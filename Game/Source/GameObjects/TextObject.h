@@ -11,7 +11,7 @@ public:
 
 	void SetText(std::string text) { ((TextMesh*)m_pMesh)->SetText(text); }
 
-	virtual void Draw(vec2 camPos, vec2 projScale) override;
+	virtual void Draw() override;
 
 protected:
 

@@ -94,6 +94,7 @@ void AnimatedSprite::UseFrame(const char* image_name)
 	total_animated_sprites++;
 
 	active_sprite_index = total_animated_sprites - 1;
+	active_sprite = animation_sprites[active_sprite_index];
 }
 
 void AnimatedSprite::UseFrame(AtlasChild* image)
@@ -102,6 +103,7 @@ void AnimatedSprite::UseFrame(AtlasChild* image)
 	total_animated_sprites++;
 
 	active_sprite_index = total_animated_sprites - 1;
+	active_sprite = animation_sprites[active_sprite_index];
 }
 
 void AnimatedSprite::SetFramerate(float frame_rate)
@@ -118,6 +120,7 @@ void AnimatedSprite::NextFrame()
 	else
 		active_sprite_index++;
 
+	active_sprite = animation_sprites[active_sprite_index];
 	animation_timer->SetElapsed(0.0f);
 }
 
@@ -132,7 +135,7 @@ void AnimatedSprite::Update(float delta)
 	}
 }
 
-AtlasChild* AnimatedSprite::FetchActiveSprite()
+AtlasChild** AnimatedSprite::FetchActiveSprite()
 {
-	return animation_sprites[active_sprite_index];
+	return &active_sprite;
 }

@@ -22,7 +22,7 @@ public:
     virtual ~GameObject();
 
     virtual void OnEvent(Event* pEvent) {}
-	virtual void Draw(vec2 camPos, vec2 projScale);
+	virtual void Draw();
 
     virtual bool IsColliding(GameObject* pOtherGameObject);
     virtual void OnCollision(GameObject* pOtherGameObject);

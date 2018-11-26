@@ -76,6 +76,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.cpp">
       <Filter>Source\GameObjects\Base Objects</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.cpp">
+      <Filter>Source\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game_Consts.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.cpp">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -156,6 +165,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.h">
       <Filter>Source\GameObjects\Base Objects</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.h">
+      <Filter>Source\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.h">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Data">
@@ -218,6 +233,12 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Moving.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Data\Shaders\Canvas.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Data\Shaders\Canvas.vert">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

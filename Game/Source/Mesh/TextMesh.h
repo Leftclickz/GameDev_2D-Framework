@@ -10,7 +10,7 @@ class TextMesh : public Mesh
 public:
 
 	TextMesh();
-	TextMesh(std::string text, ShaderProgram* textureShader, ShaderProgram* debugShader);
+	TextMesh(std::string text);
 
 	void SetText(std::string text);
 	std::string GetText() { return m_Text; }

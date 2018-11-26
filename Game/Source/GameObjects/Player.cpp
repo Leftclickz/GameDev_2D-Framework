@@ -70,7 +70,7 @@ void Player::Update(float deltatime)
 		Game* game = (Game*)m_pGame;
 
 		//check to see if there's a wall
-		if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + new_pos)->IsWalkable())
+		if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + (new_pos * TILE_SIZE))->IsWalkable())
 			Move(new_pos);
 
 		//Now that we have attempted a move command, set our flag to true and make the game move enemies early.
@@ -79,13 +79,12 @@ void Player::Update(float deltatime)
 	}
 }
 
-void Player::Draw(vec2 camPos, vec2 projScale)
+void Player::Draw()
 {
-	AnimatedObject::Draw(camPos, projScale);
+	AnimatedObject::Draw();
 }
 
 void Player::Move(vec2 direction)
 {
-	m_Transform.object_position += (direction * TILE::TILE_LENGTH);
-	
+	m_Transform.object_position += (direction * TILE::TILE_LENGTH);	
 }

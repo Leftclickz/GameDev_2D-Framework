@@ -8,16 +8,22 @@ Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
 	m_WallMesh = wallMesh;
 	m_BeatTimer = nullptr;
 
+	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
+
 	m_Audio = new Audio(name);
 	m_Audio->SetDoesLoop(true);
 	m_Audio->Play();
 	m_Audio->SetVolume(0.5f);
 	
 	LoadLevelData(name);
+	CreateCanvas();
 }
 
 Level::~Level()
 {
+	for (unsigned int i = 0; i < level_dimensions; i++)
+		delete m_TileMap[i];
+
 	delete[] m_TileMap;
 	m_TileMap = nullptr;
 
@@ -25,12 +31,19 @@ Level::~Level()
 	m_BeatTimer = nullptr;
 
 	delete m_Audio;
+
+	delete m_Canvas;
 }
 
-void Level::Draw(vec2 camPos, vec2 projScale)
+void Level::Draw()
 {
+
+	//Draw the tile map
+	m_Canvas->DrawCanvas();
+
+	//We check tiles for walls and then draw those too.
 	for (int i = level_dimensions - 1; i >= 0; i--)
-		m_TileMap[i].Draw(camPos, projScale);
+		m_TileMap[i]->Draw();
 }
 
 void Level::Update(float deltatime)
@@ -48,12 +61,12 @@ Tile* Level::GetTileAtPosition(vec2 position)
 
 	int index = x + (LEVEL_TILE_DIMENSIONS.x * y);
 
-	return &m_TileMap[index];
+	return m_TileMap[index];
 }
 
 Tile* Level::GetTileAtPosition(int tx, int ty)
 {
-	return &m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
+	return m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
 }
 
 void Level::AddBeat()
@@ -72,7 +85,7 @@ void Level::AddBeat()
 void Level::LoadLevelData(const char* name)
 {
 	//for now we're just drawing a map of nothing but floor. We'd want to load a file here
-		m_TileMap = new Tile[level_dimensions];
+		m_TileMap = new Tile*[level_dimensions];
 
 		//Using a default beat timer for now at 188bpm.
 		m_BeatTimer = new Timer(BPM, true);
@@ -89,11 +102,11 @@ void Level::LoadLevelData(const char* name)
 		float y = (float)f * TILE_SIZE.y;
 
 		if (d % 2 == 0 && f % 2 == 0)
-			m_TileMap[i] = Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
 		else if (d % 2 == 1 && f % 2 == 1)
-			m_TileMap[i] = Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
+			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
 		else
-			m_TileMap[i] = Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
+			m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
 
 		//std::string variant_name = animation_name;
 
@@ -109,10 +122,10 @@ void Level::LoadLevelData(const char* name)
 		if (d == 3)
 		{
 			if (f != 2)
-				m_TileMap[i].AddWall(new Wall(m_pGame, m_WallMesh,"Wall_1"));
+				m_TileMap[i]->AddWall(new Wall(m_pGame, m_WallMesh,"Wall_1"));
 		}
 
-		m_TileMap[i].SetPosition(i);
+		m_TileMap[i]->SetPosition(i);
 	}
 }
 
@@ -123,4 +136,16 @@ void Level::SwapFloorSprite()
 
 	floor = ImageManager::UseAnimation("Floor_1_Variant_2");
 	floor->NextFrame();
+
+	CreateCanvas();
+}
+
+void Level::CreateCanvas()
+{
+	m_Canvas->Clear();
+
+	for (unsigned int i = 0; i < level_dimensions; i++)
+		m_Canvas->AddVerts(TILE::TILE_MESH, 4, m_TileMap[i]->GetTexturedTransform());
+
+	m_Canvas->GenerateCanvas();
 }

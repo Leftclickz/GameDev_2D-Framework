@@ -7,14 +7,13 @@ TextMesh::TextMesh() : Mesh()
 	m_TextAtlas = ImageManager::UseImageAtlas("Text/DefaultFont_White");
 }
 
-TextMesh::TextMesh(std::string text, ShaderProgram* TexShader, ShaderProgram* DebugShader) : Mesh()
+TextMesh::TextMesh(std::string text) : Mesh()
 {
-	m_Text = "";
+
+	m_DrawDebugLines = false;
+
 	m_PrimitiveType = GL_TRIANGLES;
 	m_TextAtlas = ImageManager::UseImageAtlas("Text/DefaultFont_White");
-
-	m_TextureShader = TexShader;
-	m_DebugShader = DebugShader;
 
 	SetText(text);
 }
@@ -27,26 +26,28 @@ void TextMesh::SetText(std::string text)
 
 void TextMesh::Draw(WorldTransform* transform)
 {
-	GLuint shader = SetActiveShader(m_TextureShader);
-
+	GLuint shader = TEXTURE_SHADER;
 	//Draw call for texture
 	{
+		glUseProgram(shader);
+
 		glActiveTexture(GL_TEXTURE0 + m_TextAtlas->atlas_image->TU_index);
 		glBindTexture(GL_TEXTURE_2D, m_TextAtlas->atlas_image->GL_texture_index);
 
-		GLint textureLoc = glGetUniformLocation(m_TextureShader->GetProgram(), "u_Tex");
+		GLint textureLoc = glGetUniformLocation(shader, "u_Tex");
 		if (textureLoc != -1)
 			glUniform1i(textureLoc, m_TextAtlas->atlas_image->TU_index);
 
 		SetUniform2f(shader, "u_UVOffset", vec2(0.0f,0.0f));
 		SetUniform2f(shader, "u_UVScale", vec2(1.0f,1.0f));
 
-		DrawTexture(transform, shader);
+		DrawTexture(transform);
 	}
 	if (m_DrawDebugLines)
 	{
-		shader = SetActiveShader(m_DebugShader);
-		DebugDraw(transform, shader);
+		shader = DEBUG_SHADER;
+		glUseProgram(shader);
+		DebugDraw(transform);
 	}
 }
 
@@ -105,6 +106,7 @@ void TextMesh::GenerateTextMesh()
 
 		vec2 sprite_size;
 
+		//If we have a supported character we'll pull it up and use it for verts. If we have a space we'll use a default size (4,18)
 		if (character != " ")
 		{
 			AtlasChild* sprite = m_TextAtlas->GetSprite(character.c_str());
@@ -132,8 +134,6 @@ void TextMesh::GenerateTextMesh()
 		position.x += sprite_size.x;
 	}
 
-	// ATM this can only be called once, so we assert if it's called again with a VBO already allocated.
-	assert(m_VBO == 0);
 
 	// Gen and fill buffer with our attributes.
 	glGenBuffers(1, &m_VBO);

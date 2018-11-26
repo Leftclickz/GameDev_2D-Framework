@@ -1,6 +1,55 @@
 #pragma once
 #include "Mesh/Mesh.h"
 
+class Camera;
+class Game;
+
+//SHADERS
+class SHADERS
+{
+
+public:
+
+	static ShaderProgram* TEXTURE_SHADER_PROGRAM;
+	static ShaderProgram* DEBUG_SHADER_PROGRAM;
+	static ShaderProgram* CANVAS_SHADER_PROGRAM;
+
+	static void LoadShaders() 
+	{ 
+		TEXTURE_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag");
+		DEBUG_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Color.vert", "Data/Shaders/Color.frag");
+		CANVAS_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Canvas.vert", "Data/Shaders/Canvas.frag");
+	}
+
+	static void DestroyShaders() 
+	{
+		delete TEXTURE_SHADER_PROGRAM;
+		delete DEBUG_SHADER_PROGRAM;
+		delete CANVAS_SHADER_PROGRAM;
+	}
+};
+
+class CAMERA
+{
+
+public:
+	static void CreateCameras(Game* game);
+	static void DestroyCameras();
+
+	static Camera* GetPlayerCamera();
+
+private:
+
+	static Camera* PLAYER_CAMERA;
+
+};
+
+#define TEXTURE_SHADER SHADERS::TEXTURE_SHADER_PROGRAM->GetProgram()
+#define DEBUG_SHADER  SHADERS::DEBUG_SHADER_PROGRAM->GetProgram()
+#define CANVAS_SHADER  SHADERS::CANVAS_SHADER_PROGRAM->GetProgram()
+
+#define PLAYER_CAMERA_POSITION CAMERA::GetPlayerCamera()->GetPosition()
+#define PLAYER_CAMERA_PROJECTION CAMERA::GetPlayerCamera()->GetProjection()
 
 //Generic tile size
 static const vec2 TILE_SIZE = vec2(50.0f, 50.0f);
@@ -32,16 +81,16 @@ namespace TILE
 	static const VertexFormat TILE_MESH[] = {
 		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
 		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
-		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), WHITE),
 		VertexFormat(vec2(0.0f,50.0f),vec2(0.0f,1.0f), WHITE),
+		VertexFormat(vec2(50.0f,50.0f),vec2(1.0f,1.0f), WHITE),
 	};
 
 	static const VertexFormat WALL_MESH[] = 
 	{
 		VertexFormat(vec2(0.0f,0.0f),vec2(0.0f,0.0f), WHITE),
 		VertexFormat(vec2(50.0f,0.0f),vec2(1.0f,0.0f), WHITE),
-		VertexFormat(vec2(50.0f,100.0f),vec2(1.0f,1.0f), WHITE),
 		VertexFormat(vec2(0.0f,100.0f),vec2(0.0f,1.0f), WHITE),
+		VertexFormat(vec2(50.0f,100.0f),vec2(1.0f,1.0f), WHITE),
 	};
 
 	static const int TILE_VERT_COUNT = 4;

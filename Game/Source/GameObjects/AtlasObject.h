@@ -13,7 +13,9 @@ public:
 	//Generate an image using Atlas data. Requires the name of a sprite inside the image. Omit file endings.
 	virtual void UseSprite(const char* name);
 
-	virtual void Draw(vec2 camPos, vec2 projScale) override;
+	virtual void Draw() override;
+
+	virtual SpriteAtlas* GetSpriteAtlas() { return m_Image; }
 
 protected:
 

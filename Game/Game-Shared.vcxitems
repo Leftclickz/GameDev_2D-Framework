@@ -22,6 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImageManager\SpriteDataStructures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Level\Level.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.h" />
@@ -57,6 +59,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AnimatedObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.cpp" />
@@ -71,11 +74,13 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Game\Game_Consts.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\ImageManager.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImageManager\SpriteDataStructures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Level\Level.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.cpp" />
@@ -85,6 +90,12 @@
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Color.vert" />
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Moving.frag" />
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Moving.vert" />
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.frag">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.vert">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\readme.txt" />

@@ -9,7 +9,7 @@ class TextureObject : public GameObject
 public:
 
 	TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName);
-	virtual void Draw(vec2 camPos, vec2 projScale) override;
+	virtual void Draw() override;
 
 protected:
 

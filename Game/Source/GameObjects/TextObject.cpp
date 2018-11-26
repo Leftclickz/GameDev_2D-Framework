@@ -5,9 +5,10 @@ TextObject::TextObject(GameCore* game, TextMesh* mesh) : GameObject (game, nullp
 	m_pMesh = mesh;
 }
 
-void TextObject::Draw(vec2 camPos, vec2 projScale)
+void TextObject::Draw()
 {
-	GameObject::Draw(camPos, projScale);
+	GameObject::Draw();
+
 	if (m_pMesh != nullptr)
 		((TextMesh*)m_pMesh)->Draw(&m_Transform);
 }

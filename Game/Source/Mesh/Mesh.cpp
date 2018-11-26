@@ -6,21 +6,16 @@
 Mesh::Mesh()
 {
     m_VBO = 0;
-    m_TextureShader = 0;
-	m_DebugShader = 0;
 
     m_PrimitiveType = -1;
     m_NumVerts = 0;
 }
     
-Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, ShaderProgram* shader, ShaderProgram* debug, GLuint primitive)
+Mesh::Mesh(const VertexFormat* mesh_data, int vert_count, GLuint primitive)
 {
 	m_VBO = 0;
 	m_DrawDebugLines = false;
 	m_PrimitiveType = primitive;
-
-	m_TextureShader = shader;
-	m_DebugShader = debug;
 
 	m_NumVerts = vert_count;
 	Generate(mesh_data);
@@ -65,22 +60,16 @@ void SetUniform2f(GLuint shader, const char* uniformName, vec2 value)
     }
 }
 
-//Internal swapping of shader programs
-GLuint Mesh::SetActiveShader(ShaderProgram* shader)
-{
-	GLuint shadeObj = shader->GetProgram();
-	glUseProgram(shadeObj);
-	return shadeObj;
-}
-
 
 //Internal draw call for textures.
-void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
+void Mesh::DrawTexture(WorldTransform* transform)
 {
     // Bind buffer and set up attributes.
     glBindBuffer( GL_ARRAY_BUFFER, m_VBO );
 
-    GLint loc = glGetAttribLocation( shader, "a_Position" );
+	GLuint shader = SHADERS::TEXTURE_SHADER_PROGRAM->GetProgram();
+
+    GLint loc = glGetAttribLocation(shader, "a_Position" );
     if( loc != -1 )
     {
         glVertexAttribPointer( loc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)offsetof(VertexFormat, m_Pos) );
@@ -103,12 +92,12 @@ void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
 
     // Set up uniforms.
 
-    SetUniform2f( shader, "u_ObjectScale", transform->object_scale );
-    SetUniform1f( shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI );
-    SetUniform2f( shader, "u_ObjectPosition", transform->object_position);
-	SetUniform2f( shader, "u_ObjectAnchor", transform->object_anchor);
-    SetUniform2f( shader, "u_CameraTranslation", transform->cam_pos * -1 );
-    SetUniform2f( shader, "u_ProjectionScale", transform->proj_scale );
+    SetUniform2f(shader, "u_ObjectScale", transform->object_scale );
+    SetUniform1f(shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI );
+    SetUniform2f(shader, "u_ObjectPosition", transform->object_position);
+	SetUniform2f(shader, "u_ObjectAnchor", transform->object_anchor);
+    SetUniform2f(shader, "u_CameraTranslation", PLAYER_CAMERA_POSITION * -1 );
+    SetUniform2f(shader, "u_ProjectionScale", PLAYER_CAMERA_PROJECTION );
 
     // Draw.
     glDrawArrays( m_PrimitiveType, 0, m_NumVerts );
@@ -118,8 +107,9 @@ void Mesh::DrawTexture(WorldTransform* transform, GLuint shader)
 }
 
 //Internal draw call for debug lines
-void Mesh::DebugDraw(WorldTransform* transform, GLuint shader)
+void Mesh::DebugDraw(WorldTransform* transform)
 {
+	GLuint shader = DEBUG_SHADER;
 	GLint loc = glGetAttribLocation(shader, "a_Position");
 	if (loc != -1)
 	{
@@ -139,8 +129,8 @@ void Mesh::DebugDraw(WorldTransform* transform, GLuint shader)
 	SetUniform1f(shader, "u_ObjectAngleRadians", transform->angle / 180.0f * PI);
 	SetUniform2f(shader, "u_ObjectPosition", transform->object_position);
 	SetUniform2f(shader, "u_ObjectAnchor", transform->object_anchor);
-	SetUniform2f(shader, "u_CameraTranslation", transform->cam_pos * -1);
-	SetUniform2f(shader, "u_ProjectionScale", transform->proj_scale);
+	SetUniform2f(shader, "u_CameraTranslation", PLAYER_CAMERA_POSITION * -1);
+	SetUniform2f(shader, "u_ProjectionScale", PLAYER_CAMERA_PROJECTION );
 
 	//Debug color uniform
 	loc = glGetUniformLocation(shader, "u_Color");
@@ -153,52 +143,61 @@ void Mesh::DebugDraw(WorldTransform* transform, GLuint shader)
 
 void Mesh::Draw(WorldTransform* transform, Sprite *texture)
 {
-	GLuint shader = SetActiveShader(m_TextureShader);
+	GLuint shader = TEXTURE_SHADER;
+	glUseProgram(shader);
 	//Draw call for texture
 	{
 		glActiveTexture(GL_TEXTURE0 + texture->TU_index);
 		glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
 
-		GLint textureLoc = glGetUniformLocation(m_TextureShader->GetProgram(), "u_Tex");
+		GLint textureLoc = glGetUniformLocation(TEXTURE_SHADER, "u_Tex");
 		if (textureLoc != -1)
 			glUniform1i(textureLoc, texture->TU_index);
 
-		SetUniform2f(shader, "u_UVOffset", vec2(0.0f, 0.0f));
-		SetUniform2f(shader, "u_UVScale", vec2(1.0f, 1.0f));
+		SetUniform2f(TEXTURE_SHADER, "u_UVOffset", vec2(0.0f, 0.0f));
+		SetUniform2f(TEXTURE_SHADER, "u_UVScale", vec2(1.0f, 1.0f));
 
-		DrawTexture(transform, shader);
+		DrawTexture(transform);
 	}
 	//Draw call for debug
 	if (m_DrawDebugLines)
 	{
-		shader = SetActiveShader(m_DebugShader);
-		DebugDraw(transform, shader);
+		shader = DEBUG_SHADER;
+		glUseProgram(shader);
+		DebugDraw(transform);
 	}
 }
 
 void Mesh::Draw(WorldTransform* transform, Sprite* texture, AtlasChild *sprite_data)
 {
-	GLuint shader = SetActiveShader(m_TextureShader);
+	GLuint shader = TEXTURE_SHADER;
+	glUseProgram(shader);
 	//Draw call for texture
 	{
 		glActiveTexture(GL_TEXTURE0 + texture->TU_index);
 		glBindTexture(GL_TEXTURE_2D, texture->GL_texture_index);
 
-		GLint textureLoc = glGetUniformLocation(m_TextureShader->GetProgram(), "u_Tex");
+		GLint textureLoc = glGetUniformLocation(shader, "u_Tex");
 		if (textureLoc != -1)
 			glUniform1i(textureLoc, texture->TU_index);
 
 		SetUniform2f(shader, "u_UVOffset", sprite_data->sprite_UV_Offset);
 		SetUniform2f(shader, "u_UVScale", sprite_data->sprite_UV_Scale);
 
-		DrawTexture(transform, shader);
+		DrawTexture(transform);
 	}
 	//Draw call for debug
 	if (m_DrawDebugLines)
 	{
-		shader = SetActiveShader(m_DebugShader);
-		DebugDraw(transform, shader);
+		shader = DEBUG_SHADER;
+		glUseProgram(shader);
+		DebugDraw(transform);
 	}
+}
+
+void Mesh::Draw(TexturedTransform* transform)
+{
+	Draw(transform->world_transform, transform->atlas_image, *transform->rendered_image);
 }
 
 //Generate a fresh mesh from vertex data

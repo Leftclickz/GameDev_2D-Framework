@@ -79,7 +79,7 @@ public:
 	void Update(float delta);
 
 	//Fetch active sprite to draw
-	AtlasChild* FetchActiveSprite();
+	AtlasChild** FetchActiveSprite();
 
 	//the name of our animation
 	const char* animation_name;
@@ -92,8 +92,9 @@ private:
 	//Animation timer
 	Timer* animation_timer;
 
-	//Currently active sprite index
+	//Currently active sprite
 	unsigned int active_sprite_index;
+	AtlasChild* active_sprite;
 	
 	//Controls whether the animation updates with time or manually
 	bool updates_per_frame;

@@ -1,7 +1,5 @@
 #include "GamePCH.h"
 
-#include "Game/Game.h"
-
 Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
 {
@@ -32,8 +30,8 @@ Game::~Game()
 
 	delete m_TestLevel;
 
-    delete m_TextureShader;
-	delete m_DebugShader;
+	SHADERS::DestroyShaders();
+	CAMERA::DestroyCameras();
 
 	delete m_AI;
 
@@ -63,9 +61,8 @@ void Game::LoadContent()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Create our shaders.
-    m_TextureShader = new ShaderProgram( "Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag" );
-	m_DebugShader = new ShaderProgram("Data/Shaders/Color.vert", "Data/Shaders/Color.frag");
-
+	SHADERS::LoadShaders();
+	
 	//Initialize sounds
 	AudioManager::Initialize();
 	AudioManager::Reserve();
@@ -121,14 +118,20 @@ void Game::LoadContent()
 	animation->NextFrame();
 	
 	//Create mesh
-	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
-	m_MeshTile->SetDrawDebugLines(true);
-	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, m_TextureShader, m_DebugShader, GL_TRIANGLE_FAN);
-	m_WallMesh->SetDrawDebugLines(true);
+	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
+	//m_MeshTile->SetDrawDebugLines(true);
+	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
+	//m_WallMesh->SetDrawDebugLines(true);
 
 	//test Text
-	m_TextMeshTest = new TextMesh("TRAVIS IS GAY OMEGALUL KAPPA123", m_TextureShader, m_DebugShader);
-	m_TextMeshTest->SetDrawDebugLines();
+	m_TextMeshTest = new TextMesh("TRAVIS IS GAY OMEGALUL KAPPA123");
+	//m_TextMeshTest->SetDrawDebugLines();
+
+    // Create our player.
+    m_pPlayer = new Player( this, m_MeshTile);
+
+	//Create our cameras
+	CAMERA::CreateCameras(this);
 
 	//Create our level
 	m_TestLevel = new Level(this, m_MeshTile, m_WallMesh, "Floor_1");
@@ -136,9 +139,6 @@ void Game::LoadContent()
 	//Create AI
 	m_AI = new AI_Patterns(this);
 	m_AI->SetLevel(m_TestLevel);
-
-    // Create our player.
-    m_pPlayer = new Player( this, m_MeshTile);
 
 	//Testing animated sprite atlas
     m_SlimeTest = new Slime( this, m_MeshTile);
@@ -151,12 +151,15 @@ void Game::LoadContent()
     m_pPlayerController = new PlayerController(m_pPlayer);
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
+
+
 	m_SlimeTest->SetPosition(vec2(200.0f, 50.0f));
 	m_BatTest->SetPosition(vec2(100.0f, 50.0f));
 	m_SkeletonTest->SetPosition(vec2(300, 100.0f));
 
 	m_TestText->SetPosition(2);
 	m_pPlayer->SetPosition(46);
+
 
     CheckForGLErrors();
 }
@@ -191,15 +194,15 @@ void Game::Draw()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//Draw our game objects.
-	m_TestLevel->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
+	m_TestLevel->Draw();
 
 
-	m_pPlayer->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
-	m_SlimeTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
-	m_BatTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
-	m_SkeletonTest->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
+	m_pPlayer->Draw();
+	m_SlimeTest->Draw();
+	m_BatTest->Draw();
+	m_SkeletonTest->Draw();
 
-	m_TestText->Draw(m_pPlayer->GetPosition(), 1 / HALF_SCREEN);
+	m_TestText->Draw();
 
 	//m_TestLevel->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
 	//m_pPlayer->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));

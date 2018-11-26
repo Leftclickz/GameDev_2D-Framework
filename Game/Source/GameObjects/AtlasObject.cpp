@@ -12,9 +12,10 @@ void AtlasObject::UseSprite(const char* name)
 	m_Sprite = m_Image->GetSprite(name);
 }
 
-void AtlasObject::Draw(vec2 camPos, vec2 projScale)
+void AtlasObject::Draw()
 {
-	GameObject::Draw(camPos, projScale);
+	GameObject::Draw();
+
 	if (m_pMesh != 0)
 		m_pMesh->Draw(&m_Transform, m_Image->atlas_image, m_Sprite);
 }
