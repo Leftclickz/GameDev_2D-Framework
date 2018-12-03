@@ -17,13 +17,12 @@ class Player : public AnimatedObject
 protected:
     PlayerController* m_pPlayerController;
 
-    float m_Speed;
-    float m_TurningSpeed;
 	bool m_Moved;
 
-	Timer* m_BeatTimer;
-
 	virtual std::string GetDebugTag() override { return "Player"; }
+
+	Audio* m_AttackSounds[4];
+	Audio* m_SwordClash;
 
 public:
     Player(GameCore* pGame, Mesh* pMesh);
@@ -34,11 +33,9 @@ public:
 
     void SetPlayerController(PlayerController* controller) { m_pPlayerController = controller; }
 
-	void Move(vec2 direction);
+	void AttemptMovement(int index);
 	bool HasMovedThisBeat() { return m_Moved; }
 
-    void SetSpeed(float speed) { m_Speed = speed; }
-    void SetTurningSpeed(float speed) { m_TurningSpeed = speed; }
 	void SetMoved(bool moved) { m_Moved = moved; }
 };
 

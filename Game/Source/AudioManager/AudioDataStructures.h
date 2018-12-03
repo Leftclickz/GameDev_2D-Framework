@@ -70,7 +70,7 @@ class Audio
 public:
 	//Constructor for the Audio class, many extensions are supported, use 'streamed' for longer files such as background music.
 	//Don't stream for short files, such as sound effects. Audio files be looped.
-	Audio(const char* filename);
+	Audio(const char** filename);
 	~Audio();
 
 	//Play and Stop methods
@@ -140,8 +140,7 @@ public:
 	//Returns the duration of the audio object, in seconds
 	double GetDuration();
 
-	//
-	//void DispatchEvent(Event& event);
+	const char** GetName() { return m_Name; }
 
 private:
 	//Member variables
@@ -150,6 +149,7 @@ private:
 	XAUDIO2_BUFFER m_Buffer;
 	bool m_IsPlaying;
 	unsigned long long m_SampleOffset;
+	const char** m_Name;
 };
 
 

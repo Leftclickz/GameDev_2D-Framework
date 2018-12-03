@@ -8,8 +8,10 @@ class Enemy : public AnimatedObject
 
 public:
 
-	Enemy(GameCore* pGame, Mesh* pMesh, const char* pName);
+	Enemy(GameCore* pGame, Mesh* pMesh, const char** pName);
 	virtual void DoNextMove() {}
+
+	virtual void TakeDamage(float damage) override;
 
 protected:
 
@@ -18,6 +20,4 @@ protected:
 	bool AttemptMovement(int index);
 
 	AIPathfindingFunction m_Pathfinding;
-
-	int m_Life;
 };

@@ -1,7 +1,7 @@
 #include "GamePCH.h"
 #include "Mesh/Mesh.h"
 
-TextureObject::TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName) : GameObject(pGame,pMesh)
+TextureObject::TextureObject(GameCore* pGame, Mesh* pMesh, const char** pName) : GameObject(pGame,pMesh)
 {
 	m_Image = ImageManager::UseImage(pName);
 	assert(m_Image->GL_texture_index != -1);

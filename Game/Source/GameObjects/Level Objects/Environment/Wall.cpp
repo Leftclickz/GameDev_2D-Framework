@@ -1,6 +1,6 @@
 #include "GamePCH.h"
 
-Wall::Wall(GameCore* pGame, Mesh* pMesh, const char* pName) : AtlasObject(pGame,pMesh,pName)
+Wall::Wall(GameCore* pGame, Mesh* pMesh, const char** pName) : AtlasObject(pGame,pMesh,pName)
 {
 	//unsigned int random_index = rand() % 8;
 

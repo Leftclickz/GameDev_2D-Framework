@@ -1,8 +1,8 @@
 #include "GamePCH.h"
 
-AtlasObject::AtlasObject(GameCore* pGame, Mesh* pMesh, const char* pName) : GameObject(pGame, pMesh)
+AtlasObject::AtlasObject(GameCore* pGame, Mesh* pMesh, const char** pName) : GameObject(pGame, pMesh)
 {
-	if (pName != "empty")
+	if (pName != nullptr)
 		m_Image = ImageManager::UseImageAtlas(pName);
 }
 

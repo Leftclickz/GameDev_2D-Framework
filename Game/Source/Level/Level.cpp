@@ -1,54 +1,66 @@
 #include "GamePCH.h"
 #include "../Game/Game.h"
+#include "Level.h"
 
-Level::Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name)
+Level::Level(GameCore* game, const char** name)
 {
 	m_pGame = (Game*)game;
-	m_TileMesh = mesh;
-	m_WallMesh = wallMesh;
 	m_BeatTimer = nullptr;
 
-	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
-	m_CanvasVariant = new Canvas(level_dimensions, ImageManager::UseImage("Floor_1"));
-	m_Canvas->SetDrawDebugLines();
-	m_CanvasVariant->SetDrawDebugLines();
+	//Canvases
+	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage(&TEXTURE_NAMES::FLOOR));
+	m_CanvasVariant = new Canvas(level_dimensions, ImageManager::UseImage(&TEXTURE_NAMES::FLOOR));
+	//m_Canvas->SetDrawDebugLines();
+	//m_CanvasVariant->SetDrawDebugLines();
 
+	//Tilemap
 	m_TileMap = new TileData[level_dimensions];
 
-	m_WalkingTile = new TileProperties;
-	m_WalkingTile->tile_mesh = mesh;
-	m_WalkingTile->atlas_image = ImageManager::UseImage("Floor_1");
+	//enemy vector
+	m_EnemyVector = new std::vector<Enemy*>;
 
-	m_Audio = new Audio(name);
+	//Test properties
+	m_WalkingTile = new TileProperties;
+	m_WalkingTile->tile_mesh = MESHES::TILEMESH_DEFAULT_SIZE;
+
+	//Set level audio
+	m_Audio = AudioManager::GetAudio(&AUDIO_NAMES::FLOOR_1);
 	m_Audio->SetDoesLoop(true);
+	m_Audio->SetVolume(0.15f);
 	m_Audio->Play();
-	m_Audio->SetVolume(0.5f);
 	
+	//Load the tile data
 	LoadLevelData(name);
 
+	//create both canvas variants
 	CreateCanvas(m_Canvas);
 	SwapFloorSprite();
 	CreateCanvas(m_CanvasVariant);
 
+	//Set canvas 1 active
 	m_ActiveCanvas = m_Canvas;
 }
 
 Level::~Level()
 {
-	//for (unsigned int i = 0; i < level_dimensions; i++)
-	//	delete m_TileMap[i];
-
+	//delete the tilemap
 	delete[] m_TileMap;
-	m_TileMap = nullptr;
 
+	//delete the beat timer
 	delete m_BeatTimer;
-	m_BeatTimer = nullptr;
 
-	delete m_Audio;
+	//delete tile properties
 	delete m_WalkingTile;
 
+	//delete canvases
 	delete m_Canvas;
 	delete m_CanvasVariant;
+
+	//delete all enemies
+	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
+		if(m_EnemyVector->at(i) != nullptr)
+			delete m_EnemyVector->at(i);
+	delete m_EnemyVector;
 }
 
 void Level::Draw()
@@ -60,6 +72,11 @@ void Level::Draw()
 	for (int i = level_dimensions - 1; i >= 0; i--)
 		if (m_TileMap[i].m_Wall != nullptr)
 			m_TileMap[i].m_Wall->Draw();
+
+	//Draw game objects.
+	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
+		if(m_EnemyVector->at(i) != nullptr)
+			m_EnemyVector->at(i)->Draw();
 }
 
 void Level::Update(float deltatime)
@@ -84,6 +101,63 @@ TileData* Level::GetTileAtPosition(int tx, int ty)
 	return &m_TileMap[tx + ty * LEVEL_TILE_DIMENSIONS.x];
 }
 
+bool Level::CheckForCollisionsAt(int index, AnimatedObject* ObjectThatCalledThis)
+{
+	bool loop_complete = false;
+	int i = 0;
+
+	//check if any enemies collide with the index given.
+	while (loop_complete == false)
+	{
+		if (m_EnemyVector->at(i) != nullptr)
+		{
+			//check for collisions and do damage if the object calling the function is a player (enemies dont hurt each other)
+			if (m_EnemyVector->at(i)->GetPositionByIndex() == index)
+			{
+				if (ObjectThatCalledThis->GetType() == PLAYER)
+					m_EnemyVector->at(i)->TakeDamage(ObjectThatCalledThis->GetDamageCount());
+
+				return true;
+			}
+		}
+		//increment
+		i++;
+
+		//escape clause
+		if (i == m_EnemyVector->size())
+			loop_complete = true;
+	}
+
+	//check if the player will be collided on (this part only runs if an enemy calls the function)
+	if (ObjectThatCalledThis->GetType() == ENEMY)
+	{
+		if (m_pGame->GetPlayer()->GetPositionByIndex() == index)
+		{
+			m_pGame->GetPlayer()->TakeDamage(ObjectThatCalledThis->GetDamageCount());
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Level::DestroyEntity(AnimatedObject * object)
+{
+
+	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
+	{
+		if (m_EnemyVector->at(i) != nullptr)
+		{
+			if (object->GetPositionByIndex() == m_EnemyVector->at(i)->GetPositionByIndex())
+			{
+				delete m_EnemyVector->at(i);
+				m_EnemyVector->at(i) = nullptr;
+			}
+		}
+	}
+
+}
+
 void Level::AddBeat()
 {
 	//Swap the canvas every baet
@@ -91,13 +165,22 @@ void Level::AddBeat()
 
 	//If the player didnt move during the beat, too bad. They lose their movement and the enemies get a free move.
 	if (m_pGame->GetPlayer()->HasMovedThisBeat() == false)
-		m_pGame->NextBeat();
+		DoEnemyMoves();
 
 	//Set the player moving to false to prep for next beat.
 	m_pGame->GetPlayer()->SetMoved(false);
 }
 
-void Level::LoadLevelData(const char* name)
+void Level::DoEnemyMoves()
+{
+	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
+	{
+		if (m_EnemyVector->at(i) != nullptr)
+			m_EnemyVector->at(i)->DoNextMove();
+	}
+}
+
+void Level::LoadLevelData(const char** name)
 {
 	//for now we're just drawing a map of nothing but floor. We'd want to load a file here
 		//m_TileMap = new Tile*[level_dimensions];
@@ -108,18 +191,15 @@ void Level::LoadLevelData(const char* name)
 
 		//std::string animation_name = std::string(name) + "_Variant_";
 
-		AtlasChild** variant_one = ImageManager::UseAnimation("Floor_1_Variant_1")->FetchActiveSprite();
-		AtlasChild** variant_two = ImageManager::UseAnimation("Floor_1_Variant_2")->FetchActiveSprite();
+		AtlasChild** variant_one = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
+		AtlasChild** variant_two = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
 
-		Sprite* atlas = ImageManager::UseImage("Floor_1");
+		Sprite* atlas = ImageManager::UseImage(&TEXTURE_NAMES::FLOOR);
 
 	for (unsigned int i = 0; i < level_dimensions; i++)
 	{
 		int d = (i % LEVEL_TILE_DIMENSIONS.x);
 		int f = (i / LEVEL_TILE_DIMENSIONS.x);
-
-		float x = (float)d * TILE_SIZE.x;
-		float y = (float)f * TILE_SIZE.y;
 
 		//if (d % 2 == 0 && f % 2 == 0)
 		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
@@ -129,11 +209,11 @@ void Level::LoadLevelData(const char* name)
 		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
 
 		if (d % 2 == 0 && f % 2 == 0)
-			m_TileMap[i] = TileData(vec2(x, y), variant_one);
+			m_TileMap[i] = TileData(m_WalkingTile, i, VARIANT_ONE);
 		else if (d % 2 == 1 && f % 2 == 1)
-			m_TileMap[i] = TileData(vec2(x, y), variant_one);
+			m_TileMap[i] = TileData(m_WalkingTile, i, VARIANT_ONE);
 		else
-			m_TileMap[i] = TileData(vec2(x, y), variant_two);
+			m_TileMap[i] = TileData(m_WalkingTile, i, VARIANT_TWO);
 
 		//std::string variant_name = animation_name;
 
@@ -150,21 +230,37 @@ void Level::LoadLevelData(const char* name)
 		{
 			if (f != 2)
 			{
-				m_TileMap[i].m_Wall = new Wall(m_pGame, m_WallMesh, "Wall_1");
+				m_TileMap[i].m_Wall = new Wall(m_pGame, MESHES::TILEMESH_WALL_SIZE, &TEXTURE_NAMES::WALL);
 				m_TileMap[i].m_Wall->SetPosition(i);
 			}
 		}
 		
 		//m_TileMap[i]->SetPosition(i);
 	}
+
+
+	m_EnemyVector->push_back(new Skeleton(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+	m_EnemyVector->at(0)->SetPosition(42);
+
+	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+	m_EnemyVector->at(1)->SetPosition(47);
+
+	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+	m_EnemyVector->at(2)->SetPosition(48);
+
+	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+	m_EnemyVector->at(3)->SetPosition(49);
+
+	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+	m_EnemyVector->at(4)->SetPosition(50);
 }
 
 void Level::SwapFloorSprite()
 {
-	AnimatedSprite* floor = ImageManager::UseAnimation("Floor_1_Variant_1");
+	AnimatedSprite* floor = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1);
 	floor->NextFrame();
 
-	floor = ImageManager::UseAnimation("Floor_1_Variant_2");
+	floor = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V2);
 	floor->NextFrame();
 }
 
@@ -186,7 +282,7 @@ void Level::CreateCanvas(Canvas* canvas)
 	{
 		if (i / LEVEL_TILE_DIMENSIONS.x % 2 == 0)
 			//Get our verts. Forward direction drawing.
-			canvas->AddVerts(&m_TileMap[i], m_WalkingTile);
+			canvas->AddVerts(&m_TileMap[i]);
 		else
 		{
 			//Our index is 1 row higher here.
@@ -196,7 +292,7 @@ void Level::CreateCanvas(Canvas* canvas)
 			int offset = (i - (i / LEVEL_TILE_DIMENSIONS.x * LEVEL_TILE_DIMENSIONS.x) + 1);
 
 			//Get our verts. Backward direction drawing.
-			canvas->AddVerts(&m_TileMap[index - offset], m_WalkingTile, true);
+			canvas->AddVerts(&m_TileMap[index - offset], true);
 		}
 	}
 

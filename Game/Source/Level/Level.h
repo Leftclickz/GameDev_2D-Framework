@@ -1,6 +1,7 @@
 #pragma once
 
 class Game;
+class GameObject;
 class Mesh;
 class Tile;
 class Timer;
@@ -13,7 +14,7 @@ class Level
 
 public:
 
-	Level(GameCore* game, Mesh* mesh, Mesh* wallMesh, const char* name);
+	Level(GameCore* game, const char** name);
 	virtual ~Level();
 
 	void Draw();
@@ -22,19 +23,25 @@ public:
 	TileData* GetTileAtPosition(vec2 position);
 	TileData* GetTileAtPosition(int tx, int ty);
 
+	//checks for collisions. returns true for a collision, returns false if no collision
+	bool CheckForCollisionsAt(int index, AnimatedObject* ObjectThatCalledThisFunction);
+
+	void DestroyEntity(AnimatedObject* object);
+
 	void AddBeat();
+	void DoEnemyMoves();
 	float GetBPM() { return BPM; }
 
 private:
 
-	void LoadLevelData(const char* name);
+	void LoadLevelData(const char** name);
 	void SwapFloorSprite();
 	void SwapCanvas();
 
 	void CreateCanvas(Canvas* canvas);
 
 	TileData* m_TileMap;
-
+	std::vector<Enemy*>* m_EnemyVector;
 
 	TileProperties* m_WalkingTile;
 

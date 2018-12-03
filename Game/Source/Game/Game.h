@@ -31,9 +31,6 @@ protected:
 
 	//Game objects
     Player* m_pPlayer;
-    Slime* m_SlimeTest;
-	Enemy* m_BatTest;
-	Skeleton* m_SkeletonTest;
 	Level* m_TestLevel;
 	TextObject* m_TestText;
 
@@ -42,6 +39,7 @@ protected:
 
 	//AI Pathfinding
 	AI_Patterns* m_AI;
+
 
 public:
     Game(Framework* pFramework);
@@ -58,7 +56,7 @@ public:
 	virtual void NextBeat();
 	virtual Player* GetPlayer() { return m_pPlayer; }
 
-    void CheckForCollisions();
+    bool CheckForCollisions(int index);
 };
 
 #endif //__Game_H__

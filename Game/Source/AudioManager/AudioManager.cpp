@@ -1,7 +1,9 @@
 #include "GamePCH.h"
 #include <fstream>
+#include "AudioManager.h"
 
-std::vector<WaveData*>* AudioManager::LoadedAudio = nullptr;
+std::vector<WaveData*>* AudioManager::LoadedWaveData = nullptr;
+std::vector<Audio*>* AudioManager::LoadedSounds = nullptr;
 AudioEngine* AudioManager::Engine = nullptr;
 
 void AudioManager::Initialize()
@@ -9,27 +11,36 @@ void AudioManager::Initialize()
 	if (Engine == nullptr)
 		Engine = new AudioEngine();
 
-	if (LoadedAudio == nullptr)
-		LoadedAudio = new std::vector<WaveData*>;
-	else
-	{
-		Release();
-		LoadedAudio = new std::vector<WaveData*>;
-	}
+	if (LoadedWaveData == nullptr)
+		LoadedWaveData = new std::vector<WaveData*>;
+
+	if (LoadedSounds == nullptr)
+		LoadedSounds = new std::vector<Audio*>;
+
 }
 
 void AudioManager::Reserve(int value /*= 10*/)
 {
-	LoadedAudio->reserve(value);
+	LoadedWaveData->reserve(value);
+	LoadedSounds->reserve(value);
 }
 
 void AudioManager::Release()
 {
-	for (unsigned int i = 0; i < LoadedAudio->size(); i++)
-		delete LoadedAudio->at(i);
+	for (unsigned int i = 0; i < LoadedSounds->size(); i++)
+	{
+		LoadedSounds->at(i)->Stop();
+		delete LoadedSounds->at(i);
+	}
 
-	delete LoadedAudio;
-	LoadedAudio = nullptr;
+	delete LoadedSounds;
+	LoadedSounds = nullptr;
+
+	for (unsigned int i = 0; i < LoadedWaveData->size(); i++)
+		delete LoadedWaveData->at(i);
+
+	delete LoadedWaveData;
+	LoadedWaveData = nullptr;
 
 	delete Engine;
 	Engine = nullptr;
@@ -144,18 +155,38 @@ bool AudioManager::LoadFromPath(const char* path)
 	//Close the input file
 	inFile.close();
 
-	LoadedAudio->push_back(waveData);
+	LoadedWaveData->push_back(waveData);
 
 	//Return true
 	return true;
 }
 
-WaveData* AudioManager::GetAudio(const char* path)
+Audio* AudioManager::CreateAudio(const char ** name)
 {
-	for (unsigned int i = 0; i < LoadedAudio->size(); i++)
-		if (LoadedAudio->at(i)->name == path)
-			return LoadedAudio->at(i);
+	LoadedSounds->push_back(new Audio(name));
+	return GetAudio(name);
+}
+
+Audio * AudioManager::GetAudio(const char ** name)
+{
+	for (unsigned int i = 0; i < LoadedSounds->size(); i++)
+	{
+		if (*name == *LoadedSounds->at(i)->GetName())
+			return LoadedSounds->at(i);
+	}
 
 	//This should never get here
+	assert(false);
+	return new Audio(&AUDIO_NAMES::FLOOR_1);
+}
+
+WaveData* AudioManager::GetWaveData(const char* path)
+{
+	for (unsigned int i = 0; i < LoadedWaveData->size(); i++)
+		if (LoadedWaveData->at(i)->name == path)
+			return LoadedWaveData->at(i);
+
+	//This should never get here
+	assert(false);
 	return new WaveData();
 }

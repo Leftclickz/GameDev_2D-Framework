@@ -4,13 +4,13 @@
 
 struct Sprite
 {
-	const char* texture_name;
+	const char** texture_name;
 	GLuint GL_texture_index;
 	unsigned int TU_index;
 
 
-	Sprite() : texture_name("failure to load"), GL_texture_index(-1), TU_index(-1) {}
-	Sprite(const char* NAME, GLuint INDEX, unsigned int ITEX) : texture_name(NAME), GL_texture_index(INDEX), TU_index(ITEX) {}
+	Sprite() : texture_name(&TEXTURE_NAMES::DEFAULT), GL_texture_index(-1), TU_index(-1) {}
+	Sprite(const char** NAME, GLuint INDEX, unsigned int ITEX) : texture_name(NAME), GL_texture_index(INDEX), TU_index(ITEX) {}
 };
 
 struct AtlasChild
@@ -50,7 +50,7 @@ class AnimatedSprite
 
 public:
 
-	AnimatedSprite(const char* name, const char* atlas_name);
+	AnimatedSprite(const char** name, const char** atlas_name);
 	AnimatedSprite() {}
 	virtual ~AnimatedSprite();
 
@@ -82,7 +82,7 @@ public:
 	AtlasChild** FetchActiveSprite();
 
 	//the name of our animation
-	const char* animation_name;
+	const char** animation_name;
 
 	//Sprite atlas this animation is using
 	SpriteAtlas* sprite_atlas;

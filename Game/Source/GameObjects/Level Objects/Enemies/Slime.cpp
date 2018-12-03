@@ -1,8 +1,12 @@
 #include "GamePCH.h"
 
-Slime::Slime(GameCore* pGame, Mesh* pMesh) : Enemy(pGame,pMesh, "SlimeGreen_Idle")
+Slime::Slime(GameCore* pGame, Mesh* pMesh) : Enemy(pGame,pMesh, &ANIMATION_NAMES::SLIME_IDLE)
 {
 	m_Pathfinding = AI_Patterns::MoveUp;
+	m_DamagedSound = AudioManager::GetAudio(&AUDIO_NAMES::SLIME_HIT);
+
+	m_Life = 2.0f;
+	m_Damage = 1.0f;
 }
 
 void Slime::DoNextMove()

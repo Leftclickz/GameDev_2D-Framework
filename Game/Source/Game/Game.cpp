@@ -1,4 +1,6 @@
 #include "GamePCH.h"
+#include <thread>
+#include "Game.h"
 
 Game::Game(Framework* pFramework)
 : GameCore( pFramework, new EventManager() )
@@ -7,8 +9,6 @@ Game::Game(Framework* pFramework)
 	m_DebugShader = 0;
 
     m_pPlayer = 0;
-    m_SlimeTest = 0;
-	m_BatTest = 0;
 
     m_pPlayerController = 0;
 	m_AI = 0;
@@ -19,9 +19,6 @@ Game::~Game()
     delete m_pPlayerController;
 
     delete m_pPlayer;
-    delete m_SlimeTest;
-	delete m_BatTest;
-	delete m_SkeletonTest;
 	delete m_TestText;
 
 	delete m_MeshTile;
@@ -32,6 +29,7 @@ Game::~Game()
 
 	SHADERS::DestroyShaders();
 	CAMERA::DestroyCameras();
+	MESHES::DestroyMeshes();
 
 	delete m_AI;
 
@@ -62,102 +60,111 @@ void Game::LoadContent()
 
     // Create our shaders.
 	SHADERS::LoadShaders();
+
+	// Load meshes
+	MESHES::CreateDefaultMeshes();
 	
 	//Initialize sounds
 	AudioManager::Initialize();
 	AudioManager::Reserve();
 
-	//Test load a sound
-	AudioManager::LoadFromPath("Floor_1");
+	//Load audio
+	AudioManager::LoadFromPath(AUDIO_NAMES::FLOOR_1);
+	AudioManager::LoadFromPath(AUDIO_NAMES::PLAYER_MELEE_1);
+	AudioManager::LoadFromPath(AUDIO_NAMES::PLAYER_MELEE_2);
+	AudioManager::LoadFromPath(AUDIO_NAMES::PLAYER_MELEE_3);
+	AudioManager::LoadFromPath(AUDIO_NAMES::PLAYER_MELEE_4);
+	AudioManager::LoadFromPath(AUDIO_NAMES::SLIME_HIT);
+	AudioManager::LoadFromPath(AUDIO_NAMES::SKELE_HIT);
+	AudioManager::LoadFromPath(AUDIO_NAMES::SWORD_CLASH);
+
+	//create sound voices
+	AudioManager::CreateAudio(&AUDIO_NAMES::FLOOR_1);
+	AudioManager::CreateAudio(&AUDIO_NAMES::PLAYER_MELEE_1);
+	AudioManager::CreateAudio(&AUDIO_NAMES::PLAYER_MELEE_2);
+	AudioManager::CreateAudio(&AUDIO_NAMES::PLAYER_MELEE_3);
+	AudioManager::CreateAudio(&AUDIO_NAMES::PLAYER_MELEE_4);
+	AudioManager::CreateAudio(&AUDIO_NAMES::SLIME_HIT);
+	AudioManager::CreateAudio(&AUDIO_NAMES::SKELE_HIT);
+	AudioManager::CreateAudio(&AUDIO_NAMES::SWORD_CLASH);
 
 	//Initialize image manager and reserve some space
 	ImageManager::Initialize();
 	ImageManager::Reserve(10);
 
 	//Load some images
-	ImageManager::LoadImageAtlas("Player", "SpriteTool");
-	ImageManager::LoadImageAtlas("Bat", "SpriteTool");
-	ImageManager::LoadImageAtlas("SlimeGreen", "SpriteTool");
-	ImageManager::LoadImageAtlas("SkeletonWhite", "SpriteTool");
-	ImageManager::LoadImageAtlas("Floor_1", "SpriteTool");
-	ImageManager::LoadImageAtlas("Wall_1", "SpriteTool");
-	ImageManager::LoadImageAtlas("Text/DefaultFont_White", "SpriteTool");
-	ImageManager::LoadImageData("Default");
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::PLAYER, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::BAT, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::SLIME, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::SKELETON, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::FLOOR, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::WALL, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageAtlas(&TEXTURE_NAMES::FONT, &JSON_PARSING_METHOD::JIMMY);
+	ImageManager::LoadImageData(&TEXTURE_NAMES::DEFAULT);
 
 	//create player animation
-	AnimatedSprite* animation = ImageManager::CreateAnimation("Player_Idle", "Player");
+	AnimatedSprite* animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::PLAYER_IDLE, &TEXTURE_NAMES::PLAYER);
+	animation->CreateAnimationUsingAtlas(0, 3);
+
+	//create bat animation
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::BAT_IDLE, &TEXTURE_NAMES::BAT);
 	animation->CreateAnimationUsingAtlas(0, 3);
 
 	//create player animation
-	animation = ImageManager::CreateAnimation("Bat_Idle", "Bat");
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::SLIME_IDLE, &TEXTURE_NAMES::SLIME);
 	animation->CreateAnimationUsingAtlas(0, 3);
 
-	//create player animation
-	animation = ImageManager::CreateAnimation("SlimeGreen_Idle", "SlimeGreen");
+	//create skeleton attacking animation
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::SKELE_ATK, &TEXTURE_NAMES::SKELETON);
 	animation->CreateAnimationUsingAtlas(0, 3);
 
-	//create player animation
-	animation = ImageManager::CreateAnimation("SkeletonWhite_Idle", "SkeletonWhite");
+	//create skeleton idle animation
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::SKELE_IDLE, &TEXTURE_NAMES::SKELETON);
 	animation->CreateAnimationUsingAtlas(4, 7);
 
-	//create player animation
-	animation = ImageManager::CreateAnimation("SkeletonWhite_Attacking", "SkeletonWhite");
-	animation->CreateAnimationUsingAtlas(0, 3);
-
-	//create player animation
-	animation = ImageManager::CreateAnimation("Floor_1_Variant_1", "Floor_1");
+	//create floor animation
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::F1_V1, &TEXTURE_NAMES::FLOOR);
 	animation->CreateAnimationUsingAtlas(0, 1);
 	animation->SetAnimatedWithUpdates(false);
 
-	//create player animation
-	animation = ImageManager::CreateAnimation("Floor_1_Variant_2", "Floor_1");
+	//create floor 2 animation
+	animation = ImageManager::CreateAnimation(&ANIMATION_NAMES::F1_V2, &TEXTURE_NAMES::FLOOR);
 	animation->CreateAnimationUsingAtlas(2, 3);
 	animation->SetAnimatedWithUpdates(false);
 	animation->NextFrame();
 	
 	//Create mesh
 	m_MeshTile = new Mesh(TILE::TILE_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
-	m_MeshTile->SetDrawDebugLines(true);
+	//m_MeshTile->SetDrawDebugLines(true);
 	m_WallMesh = new Mesh(TILE::WALL_MESH, TILE::TILE_VERT_COUNT, GL_TRIANGLE_STRIP);
-	m_WallMesh->SetDrawDebugLines(true);
+	//m_WallMesh->SetDrawDebugLines(true);
 
 	//test Text
 	m_TextMeshTest = new TextMesh("IF TRAVIS READS THIS HE IS GAY");
-	m_TextMeshTest->SetDrawDebugLines();
+	//m_TextMeshTest->SetDrawDebugLines();
 
     // Create our player.
-    m_pPlayer = new Player( this, m_MeshTile);
+    m_pPlayer = new Player( this, MESHES::TILEMESH_DEFAULT_SIZE);
 
 	//Create our cameras
 	CAMERA::CreateCameras(this);
 
 	//Create our level
-	m_TestLevel = new Level(this, m_MeshTile, m_WallMesh, "Floor_1");
+	m_TestLevel = new Level(this, &TEXTURE_NAMES::FLOOR);
 
 	//Create AI
 	m_AI = new AI_Patterns(this);
 	m_AI->SetLevel(m_TestLevel);
 
-	//Testing animated sprite atlas
-    m_SlimeTest = new Slime( this, m_MeshTile);
-	m_BatTest = new Enemy(this, m_MeshTile, "Bat_Idle");
-	m_SkeletonTest = new Skeleton(this, m_MeshTile);
-
+	//Testing text
 	m_TestText = new TextObject(this, m_TextMeshTest);
 
     // Assign our controller.
     m_pPlayerController = new PlayerController(m_pPlayer);
     m_pPlayer->SetPlayerController( m_pPlayerController );
 
-
-
-	m_SlimeTest->SetPosition(vec2(200.0f, 50.0f));
-	m_BatTest->SetPosition(vec2(100.0f, 50.0f));
-	m_SkeletonTest->SetPosition(vec2(300, 100.0f));
-
 	m_TestText->SetPosition(2);
 	m_pPlayer->SetPosition(46);
-
 
     CheckForGLErrors();
 }
@@ -172,14 +179,12 @@ void Game::Update(float deltatime)
 {
 	//Update all animation sequences subscribed to delta time.
 	ImageManager::Update(deltatime);
-	
-	//Update player for inputs
+
+	//Update player first
 	m_pPlayer->Update(deltatime);
 
 	//Update level
 	m_TestLevel->Update(deltatime);
-
-    CheckForCollisions();
 }
 
 void Game::Draw()
@@ -193,36 +198,20 @@ void Game::Draw()
 
 	//Draw our game objects.
 	m_TestLevel->Draw();
-
-
 	m_pPlayer->Draw();
-	m_SlimeTest->Draw();
-	m_BatTest->Draw();
-	m_SkeletonTest->Draw();
-
-	m_TestText->Draw();
-
-	//m_TestLevel->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
-	//m_pPlayer->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
-	//m_SlimeTest->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
-	//m_BatTest->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
-	//m_SkeletonIdleTest->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
-	//m_SkeletonAttackingTest->Draw(HALF_LEVEL * TILE_SIZE, 1 / (HALF_LEVEL * TILE_SIZE));
+    m_TestText->Draw();
 
     CheckForGLErrors();
 }
 
 void Game::NextBeat()
 {
-	m_SlimeTest->DoNextMove();
-	m_SkeletonTest->DoNextMove();
+	GetActiveLevel()->DoEnemyMoves();
 }
 
-void Game::CheckForCollisions()
+
+bool Game::CheckForCollisions(int index)
 {
-    if( m_SlimeTest->IsColliding( m_pPlayer ) )
-    {
-        m_pPlayer->OnCollision( m_SlimeTest );
-        m_SlimeTest->OnCollision( m_pPlayer );
-    }
+	//return GetActiveLevel()->CheckCollisionsAt(index);
+	return true;
 }

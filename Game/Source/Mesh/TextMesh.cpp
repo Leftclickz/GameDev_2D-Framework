@@ -4,7 +4,7 @@ TextMesh::TextMesh() : Mesh()
 {
 	m_Text = "";
 	m_PrimitiveType = GL_TRIANGLES;
-	m_TextAtlas = ImageManager::UseImageAtlas("Text/DefaultFont_White");
+	m_TextAtlas = ImageManager::UseImageAtlas(&TEXTURE_NAMES::FONT);
 }
 
 TextMesh::TextMesh(std::string text) : Mesh()
@@ -13,7 +13,7 @@ TextMesh::TextMesh(std::string text) : Mesh()
 	m_DrawDebugLines = false;
 
 	m_PrimitiveType = GL_TRIANGLES;
-	m_TextAtlas = ImageManager::UseImageAtlas("Text/DefaultFont_White");
+	m_TextAtlas = ImageManager::UseImageAtlas(&TEXTURE_NAMES::FONT);
 
 	SetText(text);
 }

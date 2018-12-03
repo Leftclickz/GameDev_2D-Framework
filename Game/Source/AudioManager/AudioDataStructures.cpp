@@ -1,12 +1,14 @@
 #include "GamePCH.h"
 
-Audio::Audio(const char* filename) :
+Audio::Audio(const char** filename) :
 	m_Source(nullptr),
 	m_IsPlaying(false),
 	m_SampleOffset(0)
 {
 	//Get the wave data from the resource manager
-	WaveData* waveData = AudioManager::GetAudio(filename);
+	WaveData* waveData = AudioManager::GetWaveData(*filename);
+
+	m_Name = filename;
 
 	//Copy the wave format and xaudio buffer
 	memcpy(&m_WaveFormat, &waveData->waveFormat, sizeof(WAVEFORMATEX));

@@ -44,6 +44,17 @@ private:
 
 };
 
+class MESHES
+{
+public:
+	static void CreateDefaultMeshes();
+	static void DestroyMeshes();
+	static void SetMeshDebugMode(bool value = true);
+
+	static Mesh* TILEMESH_DEFAULT_SIZE;
+	static Mesh* TILEMESH_WALL_SIZE;
+};
+
 #define TEXTURE_SHADER SHADERS::TEXTURE_SHADER_PROGRAM->GetProgram()
 #define DEBUG_SHADER  SHADERS::DEBUG_SHADER_PROGRAM->GetProgram()
 #define CANVAS_SHADER  SHADERS::CANVAS_SHADER_PROGRAM->GetProgram()
@@ -72,6 +83,8 @@ static const ivec2 LEVEL_TILE_DIMENSIONS = ivec2(SCREEN_TILE_DIMENSIONS.x * 2, S
 static const vec2 HALF_SCREEN = vec2((float)SCREEN_SIZE_X, (float)SCREEN_SIZE_Y) * 0.5f;
 static const vec2 HALF_LEVEL = vec2((float)LEVEL_TILE_DIMENSIONS.x, (float)LEVEL_TILE_DIMENSIONS.y) * 0.5f;
 
+static const vec2 PROJECTION = vec2(1.0f / HALF_SCREEN);
+
 namespace TILE
 {
 	static MyColor WHITE = MyColor(255, 255, 255, 255);
@@ -98,4 +111,63 @@ namespace TILE
 
 	static const int TILE_VERT_COUNT = 4;
 	static const float TILE_LENGTH = 50.0f;
+}
+
+namespace ANIMATION_NAMES
+{
+	//Floor animation names
+	static const char* F1_V1 = "Floor_1_Variant_1";
+	static const char* F1_V2 = "Floor_1_Variant_2";
+
+	//Enemy animation names
+	static const char* SKELE_IDLE = "SkeletonWhite_Idle";
+	static const char* SKELE_ATK = "SkeletonWhite_Attacking";
+	static const char* SLIME_IDLE = "SlimeGreen_Idle";
+	static const char* BAT_IDLE = "Bat_Idle";
+	static const char* PLAYER_IDLE = "Player_Idle";
+
+}
+
+namespace JSON_PARSING_METHOD
+{
+	static const char* JIMMY = "SpriteTool";
+}
+
+namespace TEXTURE_NAMES
+{
+	//default
+	static const char* DEFAULT = "Default";
+
+	//player image
+	static const char* PLAYER = "Player";
+
+	//enemy images
+	static const char* BAT = "Bat";
+	static const char* SKELETON = "SkeletonWhite";
+	static const char* SLIME = "SlimeGreen";
+
+	//environment
+	static const char* WALL = "Wall_1";
+	static const char* FLOOR = "Floor_1";
+
+	//font
+	static const char* FONT = "Text/DefaultFont_White";
+}
+
+namespace AUDIO_NAMES
+{
+	static const char* FLOOR_1 = "Floor_1";
+
+	//player swings
+	static const char* PLAYER_MELEE_1 = "Player_Swing_1";
+	static const char* PLAYER_MELEE_2 = "Player_Swing_2";
+	static const char* PLAYER_MELEE_3 = "Player_Swing_3";
+	static const char* PLAYER_MELEE_4 = "Player_Swing_4";
+
+	//clash sounds
+	static const char* SWORD_CLASH = "Sword_Clash";
+
+	//enemy getting hit
+	static const char* SLIME_HIT = "Slime_Hit_1";
+	static const char* SKELE_HIT = "Skele_Hit_1";
 }

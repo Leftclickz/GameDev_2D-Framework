@@ -33,7 +33,7 @@ void Canvas::AddVerts(const VertexFormat* verts, int count, TexturedTransform* t
 
 		//translation
 		new_vert.m_Pos += texTransform->world_transform->object_position + texTransform->world_transform->object_anchor;
-		
+
 		//uv scaling
 		new_vert.m_UVCoord *= (*texTransform->rendered_image)->sprite_UV_Scale;
 
@@ -43,16 +43,8 @@ void Canvas::AddVerts(const VertexFormat* verts, int count, TexturedTransform* t
 		//push back the converted vertex
 		m_Verts->push_back(new_vert);
 
-		//Were converting triangle strip into triangles. So we need to add 2 extra verts for every square.
-		//We duplicate the 3rd vert, and save the 2nd to be copied over at the end.
-		if (i == 2)
-			m_Verts->push_back(new_vert);
-		else if (i == 1)
-			last_vert = new_vert;
+
 	}
-
-	m_Verts->push_back(last_vert);
-
 }
 
 void Canvas::AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransform* texTransform, bool ReverseDirection /*= false*/)
@@ -60,7 +52,6 @@ void Canvas::AddVertsByVector(std::vector<VertexFormat>* verts, TexturedTransfor
 
 	//default vertex
 	VertexFormat new_vert(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE);
-	VertexFormat last_vert(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), TILE::WHITE);
 
 	std::vector<VertexFormat> added_verts;
 	added_verts.reserve(4);
@@ -115,25 +106,44 @@ void Canvas::AddVerts(const VertexFormat* verts, int count, WorldTransform world
 	AddVerts(verts, count, &transform);
 }
 
-void Canvas::AddVerts(TileData* data, TileProperties* properties, bool ReverseDirection/* = false*/)
+void Canvas::AddVerts(TileData* data, bool ReverseDirection/* = false*/)
 {
 	//Converting the TileData and TileProperties into VertexFormat and TexturedTransform
 	TexturedTransform transform;
 	WorldTransform world_transform;
 
+	vec2 position = vec2(data->index % LEVEL_TILE_DIMENSIONS.x * TILE_SIZE.x, data->index / LEVEL_TILE_DIMENSIONS.x * TILE_SIZE.y);
+
+	const char** name;
+
+	//Fetch the animation name from the variant
+	switch (data->variant)
+	{
+	case VARIANT_ONE:
+		name = &ANIMATION_NAMES::F1_V1;
+		break;
+	case VARIANT_TWO:
+		name = &ANIMATION_NAMES::F1_V2;
+		break;
+	default:
+		name = &ANIMATION_NAMES::F1_V1;
+	}
+
+	AnimatedSprite* image = ImageManager::UseAnimation(name);
+
 	//Assign world transformations
-	world_transform.angle = properties->angle;
-	world_transform.object_anchor = properties->object_anchor;
-	world_transform.object_position = data->position;
-	world_transform.object_scale = properties->object_scale;
+	world_transform.angle = data->properties->angle;
+	world_transform.object_anchor = data->properties->object_anchor;
+	world_transform.object_position = position;
+	world_transform.object_scale = data->properties->object_scale;
 
 	//Asign texture transformation
-	transform.atlas_image = properties->atlas_image;
-	transform.rendered_image = data->rendered_image;
+	transform.atlas_image = image->sprite_atlas->atlas_image;
+	transform.rendered_image = image->FetchActiveSprite();
 	transform.world_transform = &world_transform;
 
 	//Add verts
-	AddVertsByVector(properties->tile_mesh->GetVerts(), &transform, ReverseDirection);
+	AddVertsByVector(data->properties->tile_mesh->GetVerts(), &transform, ReverseDirection);
 }
 
 void Canvas::GenerateCanvas()

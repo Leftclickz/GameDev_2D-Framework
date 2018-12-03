@@ -6,7 +6,7 @@ class Wall : public AtlasObject
 public:
 
 	Wall() : AtlasObject(nullptr,nullptr,nullptr) {}
-	Wall(GameCore* pGame, Mesh* pMesh, const char* pName);
+	Wall(GameCore* pGame, Mesh* pMesh, const char** pName);
 
 	virtual void SetPosition(int index) override;
 

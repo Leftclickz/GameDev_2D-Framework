@@ -147,9 +147,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioManager.h">
       <Filter>Source\AudioManager</Filter>
     </ClInclude>
-    <ClInclude Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Source\AudioManager\AudioDataStructures.h">
-      <Filter>Source\AudioManager</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioEngine.h">
       <Filter>Source\AudioManager</Filter>
     </ClInclude>
@@ -170,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.h">
       <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.h">
+      <Filter>Source\AudioManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -235,12 +235,8 @@
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Moving.vert">
       <Filter>Data\Shaders</Filter>
     </None>
-    <None Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Data\Shaders\Canvas.frag">
-      <Filter>Data\Shaders</Filter>
-    </None>
-    <None Include="D:\ALGONQUIN\Game And Graphics Assignments\A2\Game\Data\Shaders\Canvas.vert">
-      <Filter>Data\Shaders</Filter>
-    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.frag" />
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\readme.txt">

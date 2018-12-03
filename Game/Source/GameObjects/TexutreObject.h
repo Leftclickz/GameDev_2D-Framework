@@ -8,7 +8,7 @@ class TextureObject : public GameObject
 
 public:
 
-	TextureObject(GameCore* pGame, Mesh* pMesh, const char* pName);
+	TextureObject(GameCore* pGame, Mesh* pMesh, const char** pName);
 	virtual void Draw() override;
 
 protected:

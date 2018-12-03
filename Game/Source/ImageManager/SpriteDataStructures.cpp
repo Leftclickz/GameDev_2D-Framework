@@ -40,7 +40,7 @@ AtlasChild* SpriteAtlas::GetSpriteAtIndex(unsigned int index)
 	return &atlas_sprites[index];
 }
 
-AnimatedSprite::AnimatedSprite(const char* name, const char* atlas_name)
+AnimatedSprite::AnimatedSprite(const char** name, const char** atlas_name)
 {
 	//the name of our animation sequence
 	animation_name = name;

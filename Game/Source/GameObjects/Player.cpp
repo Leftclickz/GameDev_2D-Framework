@@ -7,16 +7,23 @@
 #include "GameObjects/PlayerController.h"
 
 Player::Player(GameCore* pGame, Mesh* pMesh) 
-: AnimatedObject(pGame,pMesh,"Player_Idle")
+: AnimatedObject(pGame,pMesh, &ANIMATION_NAMES::PLAYER_IDLE)
 , m_pPlayerController( 0 )
-, m_Speed( 0 )
-, m_TurningSpeed( 0 )
 {
 	m_Moved = false;
 	SetAnchor(vec2(0.0f, TILE_SIZE.y * 0.5f));
 
-	//m_BeatTimer = new Timer(((Game*)m_pGame)->GetActiveLevel()->GetBPM(), true);
-	//m_BeatTimer->Start();
+	m_Damage = 1.0f;
+	m_Life = 3.0f;
+
+	m_Type = PLAYER;
+
+	m_AttackSounds[0] = AudioManager::GetAudio(&AUDIO_NAMES::PLAYER_MELEE_1);
+	m_AttackSounds[1] = AudioManager::GetAudio(&AUDIO_NAMES::PLAYER_MELEE_2);
+	m_AttackSounds[2] = AudioManager::GetAudio(&AUDIO_NAMES::PLAYER_MELEE_3);
+	m_AttackSounds[3] = AudioManager::GetAudio(&AUDIO_NAMES::PLAYER_MELEE_4);
+
+	m_SwordClash = AudioManager::GetAudio(&AUDIO_NAMES::SWORD_CLASH);
 }
     
 Player::~Player()
@@ -26,52 +33,41 @@ Player::~Player()
 void Player::Update(float deltatime)
 {
 
-    SetSpeed( 0 );
-    SetTurningSpeed( 0 );
-
-
-	//m_BeatTimer->
-
-	vec2 new_pos = vec2(0.0f,0.0f);
+	int new_pos = 0;
 
     if( m_pPlayerController )
     {
         if( m_pPlayerController->IsForwardHeld() )
         {
-            //SetSpeed( PLAYER_SPEED_FORWARD );
 			m_pPlayerController->SetUp();
-			new_pos.y += 1.0f;
+			new_pos += LEVEL_TILE_DIMENSIONS.x;
         }
 
         if( m_pPlayerController->IsReverseHeld() )
         {
-            //SetSpeed( -PLAYER_SPEED_REVERSE );
 			m_pPlayerController->SetDown();
-			new_pos.y -= 1.0f;
+			new_pos -= LEVEL_TILE_DIMENSIONS.x;
         }
 
         if( m_pPlayerController->IsTurnLeftHeld() )
         {
-            //SetTurningSpeed( PLAYER_TURNING_SPEED );
 			m_pPlayerController->SetLeft();
-			new_pos.x -= 1.0f;
+			new_pos -= 1;
         }
 
         if( m_pPlayerController->IsTurnRightHeld() )
         {
-            //SetTurningSpeed( -PLAYER_TURNING_SPEED );
 			m_pPlayerController->SetRight();
-			new_pos.x += 1.0f;
+			new_pos += 1;
         }
     }
 
-	if (new_pos != vec2(0.0f, 0.0f) && m_Moved == false)
+	if (new_pos != 0 && m_Moved == false)
 	{
 		Game* game = (Game*)m_pGame;
-
-		//check to see if there's a wall
-		if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + (new_pos * TILE_SIZE))->IsWalkable())
-			Move(new_pos);
+		
+		//Attempt movement
+		AttemptMovement(new_pos);
 
 		//Now that we have attempted a move command, set our flag to true and make the game move enemies early.
 		m_Moved = true;
@@ -84,7 +80,33 @@ void Player::Draw()
 	AnimatedObject::Draw();
 }
 
-void Player::Move(vec2 direction)
+void Player::AttemptMovement(int index)
 {
-	m_Transform.object_position += (direction * TILE::TILE_LENGTH);	
+	Game* game = (Game*)m_pGame;
+
+	//convert index into a position
+	int x = index % LEVEL_TILE_DIMENSIONS.x;
+	int y = index / LEVEL_TILE_DIMENSIONS.x;
+	vec2 new_pos = vec2((float)x, (float)y) * TILE_SIZE;
+
+	//check for walls
+	if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + (new_pos))->IsWalkable() == false)
+		return;
+
+	//check for enemies
+	if (game->GetActiveLevel()->CheckForCollisionsAt(index + GetPositionByIndex(), this) == true)
+	{
+		int random = rand() % 4;
+
+		//play a hit sound as well as a player attack sound
+		m_SwordClash->Stop();
+		m_SwordClash->Play();
+		m_AttackSounds[random]->Stop();
+		m_AttackSounds[random]->Play();
+
+		return;
+	}
+
+	//move otherwise
+	m_Transform.object_position += new_pos;
 }

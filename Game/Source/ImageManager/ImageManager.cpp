@@ -49,10 +49,10 @@ void ImageManager::Release()
 }
 
 
-void ImageManager::LoadImageData(const char* name)
+void ImageManager::LoadImageData(const char** name)
 {
 	//filename pathing
-	std::string file = "Data/Images/" + (std::string)name + ".png";
+	std::string file = "Data/Images/" + (std::string)*name + ".png";
 
 	//load the file
 	GLuint gl_texture_index = LoadTexture(file.c_str(), TU_NUMBER);
@@ -62,10 +62,10 @@ void ImageManager::LoadImageData(const char* name)
 	TU_NUMBER++;
 }
 
-void ImageManager::LoadImageAtlas(const char* name, const char* convention)
+void ImageManager::LoadImageAtlas(const char** name, const char** convention)
 {
 	//filename pathing
-	std::string file = "Data/Images/Atlas/" + (std::string)name + ".png";
+	std::string file = "Data/Images/Atlas/" + (std::string)*name + ".png";
 
 	//load the file
 	GLuint gl_texture_index = LoadTexture(file.c_str(), TU_NUMBER);
@@ -79,7 +79,7 @@ void ImageManager::LoadImageAtlas(const char* name, const char* convention)
 	
 }
 
-AnimatedSprite* ImageManager::CreateAnimation(const char* name, const char* atlas)
+AnimatedSprite* ImageManager::CreateAnimation(const char** name, const char** atlas)
 {
 	LoadedAnimations->push_back(new AnimatedSprite(name, atlas));
 	return ImageManager::UseAnimation(name);
@@ -91,13 +91,13 @@ void ImageManager::Update(float deltatime)
 		LoadedAnimations->at(i)->Update(deltatime);
 }
 
-Sprite* ImageManager::UseImage(const char* name)
+Sprite* ImageManager::UseImage(const char** name)
 {
 
 	//Attempts to find an image in the list of loaded images that matches the name
 	for (unsigned int i = 0; i < LoadedImages->size(); i++)
 	{
-		if (LoadedImages->at(i).texture_name == name)
+		if (*LoadedImages->at(i).texture_name == *name)
 			return &LoadedImages->at(i);
 
 	}
@@ -107,12 +107,12 @@ Sprite* ImageManager::UseImage(const char* name)
 	return new Sprite();
 }
 
-SpriteAtlas* ImageManager::UseImageAtlas(const char* name)
+SpriteAtlas* ImageManager::UseImageAtlas(const char** name)
 {
 	//Attempts to find an atlas in the list of loaded atlas that matches the name
 	for (unsigned int i = 0; i < LoadedImages->size(); i++)
 	{
-		if (LoadedAtlas->at(i)->atlas_image->texture_name == name)
+		if (*LoadedAtlas->at(i)->atlas_image->texture_name == *name)
 			return LoadedAtlas->at(i);
 	}
 
@@ -121,12 +121,12 @@ SpriteAtlas* ImageManager::UseImageAtlas(const char* name)
 	return new SpriteAtlas();
 }
 
-AnimatedSprite* ImageManager::UseAnimation(const char* name)
+AnimatedSprite* ImageManager::UseAnimation(const char** name)
 {
 	//Attempts to find an atlas in the list of loaded atlas that matches the name
 	for (unsigned int i = 0; i < LoadedAnimations->size(); i++)
 	{
-		if (LoadedAnimations->at(i)->animation_name == name)
+		if (*LoadedAnimations->at(i)->animation_name == *name)
 			return LoadedAnimations->at(i);
 	}
 
@@ -135,15 +135,15 @@ AnimatedSprite* ImageManager::UseAnimation(const char* name)
 	return new AnimatedSprite();
 }
 
-void ImageManager::UnwrapJSONFileToAtlas(const char* name, const char* convention)
+void ImageManager::UnwrapJSONFileToAtlas(const char** name, const char** convention)
 {
 	//Get atlas we're loading data into
 	SpriteAtlas* atlas = UseImageAtlas(name);
 
-	if (convention == "SpriteTool")
+	if (*convention == JSON_PARSING_METHOD::JIMMY)
 	{
 		//Get filepath
-		std::string filepath = "Data/Images/Atlas/" + (std::string)atlas->atlas_image->texture_name + ".json";
+		std::string filepath = "Data/Images/Atlas/" + (std::string)*atlas->atlas_image->texture_name + ".json";
 
 		long length;
 
@@ -178,7 +178,7 @@ void ImageManager::UnwrapJSONFileToAtlas(const char* name, const char* conventio
 			//Load up our Atlas child. For now we're storing the name, UV Scale and UV Offset.
 			child.name = cJSON_GetObjectItem(child_data, "filename")->valuestring;
 			child.sprite_UV_Scale = image_size / atlas->atlas_size;
-			child.sprite_UV_Offset = vec2(image_offset.x / atlas->atlas_size.x, image_offset.y / atlas->atlas_size.y);
+			child.sprite_UV_Offset = image_offset / atlas->atlas_size;
 
 			//Load it into our array of children
 			atlas->atlas_sprites[i] = child;

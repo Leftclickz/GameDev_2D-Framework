@@ -15,11 +15,16 @@ public:
 
 	static bool LoadFromPath(const char* path);
 
-	static WaveData* GetAudio(const char* path);
+	static Audio* CreateAudio(const char** name);
+	static Audio* GetAudio(const char** name);
+
+	static WaveData* GetWaveData(const char* path);
 	static AudioEngine* GetEngine() { return Engine; }
 
 private:
 
-	static std::vector<WaveData*>* LoadedAudio;
+	static std::vector<WaveData*>* LoadedWaveData;
+	static std::vector<Audio*>* LoadedSounds;
+
 	static AudioEngine* Engine;
 };
