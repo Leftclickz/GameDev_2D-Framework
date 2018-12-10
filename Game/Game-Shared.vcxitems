@@ -24,11 +24,16 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_ScoreDisplay.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Sprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Text.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD_Element.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\ParticleEmitter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.h" />
@@ -41,6 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Level\Level.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\ParticleRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.h" />
   </ItemGroup>
@@ -61,11 +67,16 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\AtlasObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\GameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_ScoreDisplay.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Sprite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Text.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD_ELEMENT.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Skeleton.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Enemies\Slime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Tile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Level Objects\Environment\Wall.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\ParticleEmitter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\PlayerController.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\TextObject.cpp" />
@@ -82,6 +93,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Level\Level.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Canvas.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\Mesh.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\ParticleRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\TextMesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\Timer\Timer.cpp" />
   </ItemGroup>
@@ -96,6 +108,8 @@
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.vert">
       <FileType>Document</FileType>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Particle.frag" />
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Particle.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\readme.txt" />

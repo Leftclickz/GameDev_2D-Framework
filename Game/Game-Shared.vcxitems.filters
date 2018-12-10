@@ -85,6 +85,24 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\Camera.cpp">
       <Filter>Source\GameObjects\Base Objects</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD_ELEMENT.cpp">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Text.cpp">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Sprite.cpp">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\ParticleEmitter.cpp">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Mesh\ParticleRenderer.cpp">
+      <Filter>Source\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_ScoreDisplay.cpp">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\GamePCH.h">
@@ -171,6 +189,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Source\AudioManager\AudioDataStructures.h">
       <Filter>Source\AudioManager</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD_Element.h">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Text.h">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_Sprite.h">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\ParticleEmitter.h">
+      <Filter>Source\GameObjects\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Mesh\ParticleRenderer.h">
+      <Filter>Source\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameObjects\HUD\HUD_ScoreDisplay.h">
+      <Filter>Source\GameObjects\HUD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Data">
@@ -221,6 +257,9 @@
     <Filter Include="Source\AudioManager">
       <UniqueIdentifier>{6d3e2b6f-391b-4310-856e-fbb788c1c2a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GameObjects\HUD">
+      <UniqueIdentifier>{cf66928c-dd5e-40d5-abc0-47805e47d121}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Color.frag">
@@ -235,8 +274,18 @@
     <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Moving.vert">
       <Filter>Data\Shaders</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.frag" />
-    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.vert" />
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Canvas.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Particle.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Shaders\Particle.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\readme.txt">

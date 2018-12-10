@@ -63,6 +63,9 @@ public:
 	//Set how many frames are run per second.
 	void SetFramerate(float frame_rate);
 
+	//How long it takes for the entire animation to play out
+	float GetAnimationCycleLength() { return animation_timer->GetDuration() * (float)(total_animated_sprites + 1); }
+
 	//Manually forces the animation to go to the next frame.
 	void NextFrame();
 

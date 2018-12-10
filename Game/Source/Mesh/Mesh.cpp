@@ -2,6 +2,7 @@
 
 #include "Mesh/Mesh.h"
 #include "ImageManager/ImageManager.h"
+#include "Mesh.h"
 
 Mesh::Mesh()
 {
@@ -247,4 +248,17 @@ void Mesh::GenerateMeshFromAtlas(vec2 sprite_size)
 		m_Verts->push_back(data[i]);
 
 	Generate();
+}
+
+vec2 Mesh::GetSize()
+{
+	vec2 size(0.0f, 0.0f);
+
+	for (unsigned int i = 0; i < m_Verts->size(); i++)
+	{
+		size.x = m_Verts->at(i).m_Pos.x > size.x ? m_Verts->at(i).m_Pos.x : size.x;
+		size.y = m_Verts->at(i).m_Pos.y > size.y ? m_Verts->at(i).m_Pos.y : size.y;
+	}
+
+	return size;
 }

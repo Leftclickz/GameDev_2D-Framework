@@ -9,32 +9,48 @@ class Audio;
 struct TileData;
 struct TileProperties;
 
+
+
 class Level
 {
 
 public:
 
-	Level(GameCore* game, const char** name);
+	Level(GameCore* game, const char** name, unsigned int index);
 	virtual ~Level();
 
+	//game loop
 	void Draw();
+	void BeginPlay();
+	void StopPlay();
 	void Update(float deltatime);
 
+	//tile collision checking functions
 	TileData* GetTileAtPosition(vec2 position);
 	TileData* GetTileAtPosition(int tx, int ty);
 
 	//checks for collisions. returns true for a collision, returns false if no collision
 	bool CheckForCollisionsAt(int index, AnimatedObject* ObjectThatCalledThisFunction);
 
+	//destroys a game object that the level is responsible for if it exists
 	void DestroyEntity(AnimatedObject* object);
 
+	//beat management functions
 	void AddBeat();
 	void DoEnemyMoves();
 	float GetBPM() { return BPM; }
 
+	//Reset the level
+	void ResetLevel();
+
 private:
 
-	void LoadLevelData(const char** name);
+	//load a level with tiles, enemies etc
+	void LoadLevelData(const char** name, unsigned int index);
+
+	//fetch raw map values from file
+	const unsigned char* LoadMap(const char** name, unsigned int index);
+
 	void SwapFloorSprite();
 	void SwapCanvas();
 

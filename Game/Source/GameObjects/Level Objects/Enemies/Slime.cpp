@@ -7,6 +7,7 @@ Slime::Slime(GameCore* pGame, Mesh* pMesh) : Enemy(pGame,pMesh, &ANIMATION_NAMES
 
 	m_Life = 2.0f;
 	m_Damage = 1.0f;
+	m_Score = 10.0f;
 }
 
 void Slime::DoNextMove()
@@ -18,10 +19,10 @@ void Slime::DoNextMove()
 	m_Pathfinding(&after_movement_index);
 
 	//Attempt a movement.
-	bool moved = AttemptMovement(after_movement_index);
+	MOVEMENT_CODES moved = AttemptMovement(after_movement_index);
 
 	//If the move actually happened, do some logic to swap the next AI state.
-	if (moved)
+	if (moved == MOVEMENT_CODES::MOVED_SUCCESSFULLY)
 	{
 		//convert the new index into just the actual movement itself.
 		after_movement_index -= before_movement_index;

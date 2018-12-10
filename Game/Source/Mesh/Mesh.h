@@ -40,6 +40,7 @@ struct TexturedTransform
 };
 
 void SetUniform2f(GLuint shader, const char* uniformName, vec2 value);
+void SetUniform1f(GLuint shader, const char* uniformName, float value);
 
 class Mesh
 {
@@ -94,6 +95,9 @@ public:
 
 	//Fetch vertex vector
 	std::vector<VertexFormat>* GetVerts() { return m_Verts; }
+
+	//Get the box size of our mesh.
+	vec2 GetSize();
 };
 
 #endif //__Mesh_H__

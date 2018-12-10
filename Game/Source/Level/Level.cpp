@@ -1,8 +1,10 @@
 #include "GamePCH.h"
 #include "../Game/Game.h"
 #include "Level.h"
+#include <fstream>
+#include <sstream>
 
-Level::Level(GameCore* game, const char** name)
+Level::Level(GameCore* game, const char** name, unsigned int index)
 {
 	m_pGame = (Game*)game;
 	m_BeatTimer = nullptr;
@@ -10,8 +12,6 @@ Level::Level(GameCore* game, const char** name)
 	//Canvases
 	m_Canvas = new Canvas(level_dimensions, ImageManager::UseImage(&TEXTURE_NAMES::FLOOR));
 	m_CanvasVariant = new Canvas(level_dimensions, ImageManager::UseImage(&TEXTURE_NAMES::FLOOR));
-	//m_Canvas->SetDrawDebugLines();
-	//m_CanvasVariant->SetDrawDebugLines();
 
 	//Tilemap
 	m_TileMap = new TileData[level_dimensions];
@@ -24,13 +24,12 @@ Level::Level(GameCore* game, const char** name)
 	m_WalkingTile->tile_mesh = MESHES::TILEMESH_DEFAULT_SIZE;
 
 	//Set level audio
-	m_Audio = AudioManager::GetAudio(&AUDIO_NAMES::FLOOR_1);
+	m_Audio = AudioManager::GetAudio( &AUDIO_NAMES::FLOOR_1);
 	m_Audio->SetDoesLoop(true);
 	m_Audio->SetVolume(0.15f);
-	m_Audio->Play();
 	
 	//Load the tile data
-	LoadLevelData(name);
+	LoadLevelData(name, index);
 
 	//create both canvas variants
 	CreateCanvas(m_Canvas);
@@ -79,6 +78,16 @@ void Level::Draw()
 			m_EnemyVector->at(i)->Draw();
 }
 
+void Level::BeginPlay()
+{
+	m_Audio->Play();
+}
+
+void Level::StopPlay()
+{
+	m_Audio->Stop();
+}
+
 void Level::Update(float deltatime)
 {
 	m_BeatTimer->Update(deltatime);
@@ -105,6 +114,9 @@ bool Level::CheckForCollisionsAt(int index, AnimatedObject* ObjectThatCalledThis
 {
 	bool loop_complete = false;
 	int i = 0;
+
+	if (m_EnemyVector->size() == 0)
+		return false;
 
 	//check if any enemies collide with the index given.
 	while (loop_complete == false)
@@ -143,19 +155,41 @@ bool Level::CheckForCollisionsAt(int index, AnimatedObject* ObjectThatCalledThis
 
 void Level::DestroyEntity(AnimatedObject * object)
 {
-
+	//search for the entity to destroy
 	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
 	{
 		if (m_EnemyVector->at(i) != nullptr)
 		{
 			if (object->GetPositionByIndex() == m_EnemyVector->at(i)->GetPositionByIndex())
 			{
+				//increase player score then destory the enemy
+				m_pGame->IncreaseScore(m_EnemyVector->at(i)->GetScore());
 				delete m_EnemyVector->at(i);
 				m_EnemyVector->at(i) = nullptr;
 			}
 		}
 	}
 
+	//if there are no enemies move to the next floor
+	if (m_EnemyVector->size() == 0)
+	{
+		StopPlay();
+		m_pGame->SetNextLevel();
+	}
+
+	bool completed = true;
+
+	//check if all enemies are nullptrs (2nd safe check)
+	for (unsigned int i = 0; i < m_EnemyVector->size(); i++)
+		if (m_EnemyVector->at(i) != nullptr)
+			completed = false;
+
+	//if we're out of here then stop the music and set the next level
+	if (completed)
+	{
+		StopPlay();
+		m_pGame->SetNextLevel();
+	}
 }
 
 void Level::AddBeat()
@@ -178,36 +212,60 @@ void Level::DoEnemyMoves()
 		if (m_EnemyVector->at(i) != nullptr)
 			m_EnemyVector->at(i)->DoNextMove();
 	}
+
+	if (m_pGame->GetPlayer()->GetHealth() <= 0.0f)
+		m_pGame->ResetLevel();
 }
 
-void Level::LoadLevelData(const char** name)
+
+void Level::LoadLevelData(const char** name, unsigned int index)
 {
 	//for now we're just drawing a map of nothing but floor. We'd want to load a file here
 		//m_TileMap = new Tile*[level_dimensions];
 
 		//Using a default beat timer for now at 188bpm.
-		m_BeatTimer = new Timer(BPM, true);
-		m_BeatTimer->Start();
+	m_BeatTimer = new Timer(BPM, true);
+	m_BeatTimer->Start();
 
-		//std::string animation_name = std::string(name) + "_Variant_";
 
-		AtlasChild** variant_one = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
-		AtlasChild** variant_two = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
+	//copy data from file
+	const unsigned char* BASE_MAP = LoadMap(name, index);
 
-		Sprite* atlas = ImageManager::UseImage(&TEXTURE_NAMES::FLOOR);
+	//copy level data into temporary space	
+	unsigned char levelData[LEVEL_DIMENSIONS];
+	for (unsigned int i = 0; i < level_dimensions; i++)
+		levelData[i] = BASE_MAP[i];
+
+	//delete the old one
+	delete[] BASE_MAP;
+
+	//flip rows
+	for (int row = 0; row < LEVEL_TILE_DIMENSIONS.y / 2; row++)
+	{
+		int offset = LEVEL_TILE_DIMENSIONS.y - 1 - row;
+		for (int column = 0; column < LEVEL_TILE_DIMENSIONS.x; column++)
+		{
+			unsigned char* a = &levelData[column + (row * LEVEL_TILE_DIMENSIONS.x)];
+			unsigned char* b = &levelData[column + (offset * LEVEL_TILE_DIMENSIONS.x)];
+			unsigned char temp = *a;
+			*a = *b;
+			*b = temp;
+		}
+	}
+
+	//get our tile variations
+	AtlasChild** variant_one = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
+	AtlasChild** variant_two = ImageManager::UseAnimation(&ANIMATION_NAMES::F1_V1)->FetchActiveSprite();
+
+	//and the base sprite involved
+	Sprite* atlas = ImageManager::UseImage(&TEXTURE_NAMES::FLOOR);
 
 	for (unsigned int i = 0; i < level_dimensions; i++)
 	{
 		int d = (i % LEVEL_TILE_DIMENSIONS.x);
 		int f = (i / LEVEL_TILE_DIMENSIONS.x);
 
-		//if (d % 2 == 0 && f % 2 == 0)
-		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
-		//else if (d % 2 == 1 && f % 2 == 1)
-		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_1");
-		//else
-		//	m_TileMap[i] = new Tile(m_pGame, m_TileMesh, "Floor_1_Variant_2");
-
+		//creates a checkerboard pattern of lit/unlit tiles
 		if (d % 2 == 0 && f % 2 == 0)
 			m_TileMap[i] = TileData(m_WalkingTile, i, VARIANT_ONE);
 		else if (d % 2 == 1 && f % 2 == 1)
@@ -215,44 +273,61 @@ void Level::LoadLevelData(const char** name)
 		else
 			m_TileMap[i] = TileData(m_WalkingTile, i, VARIANT_TWO);
 
-		//std::string variant_name = animation_name;
-
-		//if (d % 2 == 0 && f % 2 == 0)
-		//	variant_name += "1";
-		//else if (d % 2 == 1 && f % 2 == 1)
-		//	variant_name += "1";
-		//else
-		//	variant_name += "2";
-
-		//m_TileMap[i] = Tile(m_pGame, m_TileMesh, variant_name);
-
-		if (d == 3)
+		//bitmasking for walls
+		if ((levelData[i] & LEVEL_DATA::WALL_MASK) == LEVEL_DATA::WALL)
 		{
-			if (f != 2)
-			{
-				m_TileMap[i].m_Wall = new Wall(m_pGame, MESHES::TILEMESH_WALL_SIZE, &TEXTURE_NAMES::WALL);
-				m_TileMap[i].m_Wall->SetPosition(i);
-			}
+			m_TileMap[i].m_Wall = new Wall(m_pGame, MESHES::TILEMESH_WALL_SIZE, &TEXTURE_NAMES::WALL);
+			m_TileMap[i].m_Wall->SetPosition(i);
 		}
-		
-		//m_TileMap[i]->SetPosition(i);
+
+		//bitmasking for enemies
+		int enemy = levelData[i] & LEVEL_DATA::ENEMY_MASK;
+
+		switch (enemy)
+		{
+		case LEVEL_DATA::SLIME:
+			m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+			m_EnemyVector->at(m_EnemyVector->size() - 1)->SetPosition(i);
+			break;
+		case LEVEL_DATA::SKELETON:
+			m_EnemyVector->push_back(new Skeleton(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
+			m_EnemyVector->at(m_EnemyVector->size() - 1)->SetPosition(i);
+			break;
+		}
+	}
+}
+
+const unsigned char* Level::LoadMap(const char ** name, unsigned int index)
+{
+	//prepare to read
+	std::ifstream reader;
+	unsigned char* map_data = new unsigned char[LEVEL_DIMENSIONS];
+
+	std::string path = "Data/Level_Maps/" + std::string(*name) + std::to_string(index) + ".txt";
+	reader.open(path, std::ifstream::in);
+
+	unsigned int i = 0;
+
+	//read all lines of data
+	for (int x = 0; x < LEVEL_TILE_DIMENSIONS.y; x++)
+	{
+		std::string input, segment;
+
+		//read next line
+		getline(reader, input);
+
+		//parse each piece of data delimited by ,
+		std::stringstream input_stream(input);
+
+		while (getline(input_stream, segment, ',') && i < level_dimensions)
+		{
+			map_data[i] = (unsigned char)strtoul(segment.c_str(), NULL, 0);
+			i++;
+		}
 	}
 
-
-	m_EnemyVector->push_back(new Skeleton(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
-	m_EnemyVector->at(0)->SetPosition(42);
-
-	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
-	m_EnemyVector->at(1)->SetPosition(47);
-
-	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
-	m_EnemyVector->at(2)->SetPosition(48);
-
-	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
-	m_EnemyVector->at(3)->SetPosition(49);
-
-	m_EnemyVector->push_back(new Slime(m_pGame, MESHES::TILEMESH_DEFAULT_SIZE));
-	m_EnemyVector->at(4)->SetPosition(50);
+	//return our raw map data
+	return map_data;
 }
 
 void Level::SwapFloorSprite()

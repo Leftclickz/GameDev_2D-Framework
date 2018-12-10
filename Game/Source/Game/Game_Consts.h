@@ -3,6 +3,7 @@
 
 class Camera;
 class Game;
+class ParticleRenderer;
 
 //SHADERS
 class SHADERS
@@ -10,15 +11,12 @@ class SHADERS
 
 public:
 
-	static ShaderProgram* TEXTURE_SHADER_PROGRAM;
-	static ShaderProgram* DEBUG_SHADER_PROGRAM;
-	static ShaderProgram* CANVAS_SHADER_PROGRAM;
-
 	static void LoadShaders() 
 	{ 
 		TEXTURE_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Moving.vert", "Data/Shaders/Moving.frag");
 		DEBUG_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Color.vert", "Data/Shaders/Color.frag");
 		CANVAS_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Canvas.vert", "Data/Shaders/Canvas.frag");
+		PARTICLE_SHADER_PROGRAM = new ShaderProgram("Data/Shaders/Particle.vert", "Data/Shaders/Particle.frag");
 	}
 
 	static void DestroyShaders() 
@@ -26,7 +24,14 @@ public:
 		delete TEXTURE_SHADER_PROGRAM;
 		delete DEBUG_SHADER_PROGRAM;
 		delete CANVAS_SHADER_PROGRAM;
+		delete PARTICLE_SHADER_PROGRAM;
 	}
+
+	static ShaderProgram* TEXTURE_SHADER_PROGRAM;
+	static ShaderProgram* DEBUG_SHADER_PROGRAM;
+	static ShaderProgram* CANVAS_SHADER_PROGRAM;
+	static ShaderProgram* PARTICLE_SHADER_PROGRAM;
+
 };
 
 class CAMERA
@@ -55,15 +60,25 @@ public:
 	static Mesh* TILEMESH_WALL_SIZE;
 };
 
+class RENDERER
+{
+public:
+	static void CreateDefaultRenderer();
+	static void DestroyRenderer();
+	static ParticleRenderer* PARTICLE_RENDERER;
+};
+
 #define TEXTURE_SHADER SHADERS::TEXTURE_SHADER_PROGRAM->GetProgram()
 #define DEBUG_SHADER  SHADERS::DEBUG_SHADER_PROGRAM->GetProgram()
 #define CANVAS_SHADER  SHADERS::CANVAS_SHADER_PROGRAM->GetProgram()
+#define PARTICLE_SHADER  SHADERS::CANVAS_SHADER_PROGRAM->GetProgram()
 
 #define PLAYER_CAMERA_POSITION CAMERA::GetPlayerCamera()->GetPosition()
 #define PLAYER_CAMERA_PROJECTION CAMERA::GetPlayerCamera()->GetProjection()
 
 #define CANVAS_RENDER_MODE GL_TRIANGLE_STRIP
 #define DEBUG_RENDER_MODE GL_LINE_STRIP
+#define PARTICLE_RENDER_MODE GL_TRIANGLE_STRIP
 
 //Generic tile size
 static const vec2 TILE_SIZE = vec2(50.0f, 50.0f);
@@ -78,12 +93,19 @@ static const int SCREEN_SIZE_Y = SCREEN_TILE_DIMENSIONS.y * (int)TILE_SIZE.y;
 
 //The total tiles in a level
 static const ivec2 LEVEL_TILE_DIMENSIONS = ivec2(SCREEN_TILE_DIMENSIONS.x * 2, SCREEN_TILE_DIMENSIONS.y * 3);
+static const int LEVEL_DIMENSIONS = 1440;
 
 //Various vectors in world units.
 static const vec2 HALF_SCREEN = vec2((float)SCREEN_SIZE_X, (float)SCREEN_SIZE_Y) * 0.5f;
 static const vec2 HALF_LEVEL = vec2((float)LEVEL_TILE_DIMENSIONS.x, (float)LEVEL_TILE_DIMENSIONS.y) * 0.5f;
 
 static const vec2 PROJECTION = vec2(1.0f / HALF_SCREEN);
+
+
+namespace VERSION_CONTROL
+{
+	static const char* CURRENT_VERSION = "0.01337";
+}
 
 namespace TILE
 {
@@ -125,6 +147,9 @@ namespace ANIMATION_NAMES
 	static const char* SLIME_IDLE = "SlimeGreen_Idle";
 	static const char* BAT_IDLE = "Bat_Idle";
 	static const char* PLAYER_IDLE = "Player_Idle";
+	
+	//particle animation
+	static const char* DUST = "Dust_Particles";
 
 }
 
@@ -148,10 +173,16 @@ namespace TEXTURE_NAMES
 
 	//environment
 	static const char* WALL = "Wall_1";
-	static const char* FLOOR = "Floor_1";
+	static const char* FLOOR = "Floor_";
 
 	//font
 	static const char* FONT = "Text/DefaultFont_White";
+
+	//hud
+	static const char* HEARTS = "HUD";
+
+	//particles
+	static const char* DUST = "Particles";
 }
 
 namespace AUDIO_NAMES
@@ -170,4 +201,30 @@ namespace AUDIO_NAMES
 	//enemy getting hit
 	static const char* SLIME_HIT = "Slime_Hit_1";
 	static const char* SKELE_HIT = "Skele_Hit_1";
+}
+
+namespace LEVEL_DATA
+{
+	unsigned int TOTAL_ENEMY_VARIANTS = 2;
+	unsigned int TOTAL_WALL_VARIANTS = 1;
+
+	const unsigned int TOTAL_LEVELS = 5;
+
+	enum WALL_BITMASK
+	{
+		NO_WALL = 0,
+		WALL = 1
+	};
+
+	enum ENEMY_BITMASK
+	{
+		NO_ENEMIES = 0,
+		SLIME = 2,
+		SKELETON = 3
+	};
+
+	const unsigned int WALL_MASK = 1;
+	const unsigned int ENEMY_MASK = 15;
+
+	const ENEMY_BITMASK ENEMIES[2] = { SLIME, SKELETON };
 }

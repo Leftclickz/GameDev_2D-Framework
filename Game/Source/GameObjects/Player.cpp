@@ -5,6 +5,7 @@
 #include "GameObjects/GameObject.h"
 #include "GameObjects/Player.h"
 #include "GameObjects/PlayerController.h"
+#include "Player.h"
 
 Player::Player(GameCore* pGame, Mesh* pMesh) 
 : AnimatedObject(pGame,pMesh, &ANIMATION_NAMES::PLAYER_IDLE)
@@ -24,6 +25,10 @@ Player::Player(GameCore* pGame, Mesh* pMesh)
 	m_AttackSounds[3] = AudioManager::GetAudio(&AUDIO_NAMES::PLAYER_MELEE_4);
 
 	m_SwordClash = AudioManager::GetAudio(&AUDIO_NAMES::SWORD_CLASH);
+
+	//create a personal dust particle
+	AnimatedSprite* dust = ImageManager::UseAnimation(&ANIMATION_NAMES::DUST);
+	AddParticle(&m_Transform, dust->FetchActiveSprite(), dust->sprite_atlas->atlas_image->TU_index, dust->GetAnimationCycleLength(), false);
 }
     
 Player::~Player()
@@ -32,6 +37,10 @@ Player::~Player()
 
 void Player::Update(float deltatime)
 {
+
+	//update our particles
+	ParticleEmitter::Update(deltatime);
+
 
 	int new_pos = 0;
 
@@ -80,7 +89,7 @@ void Player::Draw()
 	AnimatedObject::Draw();
 }
 
-void Player::AttemptMovement(int index)
+bool Player::AttemptMovement(int index)
 {
 	Game* game = (Game*)m_pGame;
 
@@ -91,7 +100,7 @@ void Player::AttemptMovement(int index)
 
 	//check for walls
 	if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + (new_pos))->IsWalkable() == false)
-		return;
+		return false;
 
 	//check for enemies
 	if (game->GetActiveLevel()->CheckForCollisionsAt(index + GetPositionByIndex(), this) == true)
@@ -104,9 +113,24 @@ void Player::AttemptMovement(int index)
 		m_AttackSounds[random]->Stop();
 		m_AttackSounds[random]->Play();
 
-		return;
+		return false;
 	}
 
-	//move otherwise
+	//move otherwise and set the particle active at our previous position
+	SetParticleActive(0);
+	GetParticle(0)->transform = m_Transform;
+	
 	m_Transform.object_position += new_pos;
+	return true;
+}
+
+void Player::TakeDamage(float damage)
+{
+	m_Life -= damage;
+
+	if (m_DamagedSound != nullptr)
+	{
+		m_DamagedSound->Stop();
+		m_DamagedSound->Play();
+	}
 }

@@ -6,7 +6,8 @@ Skeleton::Skeleton(GameCore* pGame, Mesh* pMesh) : Enemy(pGame,pMesh, &ANIMATION
 	m_DamagedSound = AudioManager::GetAudio(&AUDIO_NAMES::SKELE_HIT);
 
 	m_Life = 1.0f;
-	m_Damage = 0.5f;
+	m_Damage = 1.0f;
+	m_Score = 20.0f;
 }
 
 void Skeleton::DoNextMove()
@@ -14,9 +15,9 @@ void Skeleton::DoNextMove()
 	int index = GetPositionByIndex();
 	m_Pathfinding(&index);
 
-	bool moved = AttemptMovement(index);
+	MOVEMENT_CODES moved = AttemptMovement(index);
 
-	if (moved == true)
+	if (moved != MOVEMENT_CODES::BLOCKED_BY_WALL)
 	{
 		if (m_Pathfinding == AI_Patterns::IdleMovement)
 		{

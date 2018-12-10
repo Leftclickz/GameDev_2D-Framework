@@ -2,16 +2,15 @@
 
 TextMesh::TextMesh() : Mesh()
 {
-	m_Text = "";
+	m_DisplayText = "";
+	m_DrawDebugLines = false;
 	m_PrimitiveType = GL_TRIANGLES;
 	m_TextAtlas = ImageManager::UseImageAtlas(&TEXTURE_NAMES::FONT);
 }
 
 TextMesh::TextMesh(std::string text) : Mesh()
 {
-
 	m_DrawDebugLines = false;
-
 	m_PrimitiveType = GL_TRIANGLES;
 	m_TextAtlas = ImageManager::UseImageAtlas(&TEXTURE_NAMES::FONT);
 
@@ -20,7 +19,7 @@ TextMesh::TextMesh(std::string text) : Mesh()
 
 void TextMesh::SetText(std::string text)
 {
-	m_Text = text;
+	m_DisplayText = text;
 	GenerateTextMesh();
 }
 
@@ -31,8 +30,11 @@ void TextMesh::Draw(WorldTransform* transform)
 
 void TextMesh::GenerateTextMesh()
 {
+	//clear out the old verts
+	m_Verts->clear();
+
 	//Get the length of our string
-	int length = m_Text.length();
+	int length = m_DisplayText.length();
 
 	//If the string is empty just return out.
 	if (length == 0)
@@ -47,7 +49,7 @@ void TextMesh::GenerateTextMesh()
 
 	for (int i = 0; i < length; i++)
 	{
-		std::string character(1,m_Text[i]);
+		std::string character(1,m_DisplayText[i]);
 
 		//fucking files cant be saved using certain symbols... so here we are.
 		if (character == "/")

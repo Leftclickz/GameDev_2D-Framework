@@ -8,7 +8,9 @@ class Skeleton;
 class Player;
 class PlayerController;
 class AI_Patterns;
-class TextObject;
+class HUD_ScoreDisplay;
+class HUD_Sprite;
+class HUD_Text;
 class TextMesh;
 class Level;
 
@@ -27,12 +29,16 @@ protected:
 	//Meshes
 	Mesh* m_MeshTile;
 	Mesh* m_WallMesh;
-	TextMesh* m_TextMeshTest;
 
 	//Game objects
     Player* m_pPlayer;
-	Level* m_TestLevel;
-	TextObject* m_TestText;
+	Level** m_TestLevel;
+	HUD_ScoreDisplay* m_ScoreText;
+	HUD_Text* m_VersionText;
+	HUD_Sprite* m_TestSprite;
+
+	unsigned int LEVEL_INDEX;
+	bool RESETTING_LEVEL;
 
 	//Controller
     PlayerController* m_pPlayerController;
@@ -45,17 +51,31 @@ public:
     Game(Framework* pFramework);
     virtual ~Game();
 
+	//I/O
     virtual void OnSurfaceChanged(unsigned int width, unsigned int height);
     virtual void LoadContent();
+	virtual bool AttemptToLoadSave();
 
+	//Game loop
     virtual void OnEvent(Event* pEvent);
     virtual void Update(float deltatime);
     virtual void Draw();
 
-	virtual Level* GetActiveLevel() { return m_TestLevel; }
+	//increase game score, directly helps the HUD
+	virtual void IncreaseScore(float score);
+
+	//level management functions
+	virtual Level* GetActiveLevel() { return m_TestLevel[LEVEL_INDEX]; }
+	virtual void SetNextLevel();
+	virtual void ResetLevel();
+
+	//beat control function
 	virtual void NextBeat();
+
+	//player fetching
 	virtual Player* GetPlayer() { return m_pPlayer; }
 
+	//deprecated
     bool CheckForCollisions(int index);
 };
 

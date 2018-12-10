@@ -2,11 +2,12 @@
 #define __Player_H__
 
 class AnimatedObject;
+class ParticleEmitter;
 class Mesh;
 class PlayerController;
 class Timer;
 
-class Player : public AnimatedObject
+class Player : public AnimatedObject, public ParticleEmitter
 {
     const float PLAYER_START_X_POSITION_PCT = 0.5f;
     const float PLAYER_START_Y_POSITION_PCT = 0.3f;
@@ -28,13 +29,18 @@ public:
     Player(GameCore* pGame, Mesh* pMesh);
     virtual ~Player();
 
-    virtual void Update(float deltatime);
+    virtual void Update(float deltatime) override;
     virtual void Draw();
 
     void SetPlayerController(PlayerController* controller) { m_pPlayerController = controller; }
 
-	void AttemptMovement(int index);
+	bool AttemptMovement(int index);
 	bool HasMovedThisBeat() { return m_Moved; }
+
+	void SetHealth(float value) { m_Life = value; }
+	float GetHealth() { return m_Life; }
+
+	virtual void TakeDamage(float damage) override;
 
 	void SetMoved(bool moved) { m_Moved = moved; }
 };

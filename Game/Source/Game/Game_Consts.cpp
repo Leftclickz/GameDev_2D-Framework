@@ -5,6 +5,9 @@
 ShaderProgram* SHADERS::TEXTURE_SHADER_PROGRAM = nullptr;
 ShaderProgram* SHADERS::DEBUG_SHADER_PROGRAM = nullptr;
 ShaderProgram* SHADERS::CANVAS_SHADER_PROGRAM = nullptr;
+ShaderProgram* SHADERS::PARTICLE_SHADER_PROGRAM = nullptr;
+
+ParticleRenderer* RENDERER::PARTICLE_RENDERER = nullptr;
 
 Mesh* MESHES::TILEMESH_DEFAULT_SIZE = nullptr;
 Mesh* MESHES::TILEMESH_WALL_SIZE = nullptr;
@@ -46,4 +49,14 @@ void MESHES::SetMeshDebugMode(bool value)
 {
 	TILEMESH_WALL_SIZE->SetDrawDebugLines(value);
 	TILEMESH_DEFAULT_SIZE->SetDrawDebugLines(value);
+}
+
+void RENDERER::CreateDefaultRenderer()
+{
+	PARTICLE_RENDERER = new ParticleRenderer(TILE::TILE_MESH, TILE::TILE_VERT_COUNT);
+}
+
+void RENDERER::DestroyRenderer()
+{
+	delete PARTICLE_RENDERER;
 }

@@ -8,9 +8,11 @@ Enemy::Enemy(GameCore* pGame, Mesh* pMesh, const char** pName) : AnimatedObject(
 
 	m_pGame = pGame;
 	m_Life = 1.0f;
-	m_Damage = 0.5f;
+	m_Damage = 1.0f;
+	m_Score = 10.0f;
 	m_Type = ENEMY;
 	m_Pathfinding = AI_Patterns::IdleMovement;
+	b_IsActive = true;
 }
 
 void Enemy::TakeDamage(float damage)
@@ -19,14 +21,20 @@ void Enemy::TakeDamage(float damage)
 }
 
 
-bool Enemy::AttemptMovement(int index)
+void Enemy::Reset()
+{
+	m_Life = 1.0f;
+	m_Damage = 1.0f;
+}
+
+MOVEMENT_CODES Enemy::AttemptMovement(int index)
 {
 
 	index -= GetPositionByIndex();
 
 	//idle movement is always possible
 	if (index == 0)
-		return true;
+		return MOVED_SUCCESSFULLY;
 
 	Game* game = (Game*)m_pGame;
 
@@ -38,14 +46,16 @@ bool Enemy::AttemptMovement(int index)
 
 	//check if the enemy will collide into a wall
 	if (game->GetActiveLevel()->GetTileAtPosition(GetPosition() + new_pos)->IsWalkable() == false)
-		return false;
+		return BLOCKED_BY_WALL;
 
 	//check if it will collide with any enemies or the player
 	if (game->GetActiveLevel()->CheckForCollisionsAt(index + GetPositionByIndex(), this) == true)
-		return false;
+		return COLLIDED_WITH_SOMETHING;
 
 	//move the enemy if it wont be blocked.
 	m_Transform.object_position += new_pos;
-	return true;
+
+	//return successful movement code
+	return MOVED_SUCCESSFULLY;
 }
 

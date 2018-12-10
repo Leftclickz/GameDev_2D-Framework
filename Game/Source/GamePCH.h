@@ -18,6 +18,7 @@
 #include "Mesh/Mesh.h"
 #include "Mesh/TextMesh.h"
 #include "Mesh/Canvas.h"
+#include "Mesh/ParticleRenderer.h"
 
 //Sounds
 #include "AudioManager/AudioDataStructures.h"
@@ -37,6 +38,10 @@
 #include "GameObjects/TextObject.h"
 #include "GameObjects/Camera.h"
 
+//interfaces
+#include "GameObjects/HUD_Element.h"
+#include "GameObjects/ParticleEmitter.h"
+
 //Level objects
 #include "Level/Level.h"
 
@@ -49,6 +54,11 @@
 #include "GameObjects/Level Objects/Enemies/Slime.h"
 #include "GameObjects/Level Objects/Enemies/Skeleton.h"
 #include "GameObjects/Player.h"
+
+//HUD objects
+#include "GameObjects/HUD/HUD_Text.h"
+#include "GameObjects/HUD/HUD_Sprite.h"
+#include "GameObjects/HUD/HUD_ScoreDisplay.h"
 
 #if ANDROID
 #include "android_native_app_glue.h"
